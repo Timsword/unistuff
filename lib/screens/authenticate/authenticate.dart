@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unistuff_main/screens/authenticate/sign_in.dart';
+import 'package:unistuff_main/screens/authenticate/register.dart';
 
 class Authenticate extends StatefulWidget {
   const Authenticate({Key? key}) : super(key: key);

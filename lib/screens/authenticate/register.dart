@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:unistuff_main/services/auth.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({Key? key}) : super(key: key);
+class Register extends StatefulWidget {
+  const Register({Key? key}) : super(key: key);
 
   @override
-  _SignInState createState() => _SignInState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
-  final AuthService _auth = AuthService();
-
+class _RegisterState extends State<Register> {
   //text field states
   String email = '';
   String password = '';
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
-        title: Text('Giriş yap'),
+        title: Text('Unistuff\'a katıl!'),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
@@ -44,7 +43,7 @@ class _SignInState extends State<SignIn> {
                   }),
               SizedBox(height: 20.0),
               ElevatedButton(
-                child: Text("Giriş yap"),
+                child: Text("Üye ol"),
                 onPressed: () async {
                   print(email);
                   print(password);

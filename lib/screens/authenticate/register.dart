@@ -62,7 +62,6 @@ class _RegisterState extends State<Register> {
                   //e-mail
                   validator: (val) =>
                       val!.isEmpty ? 'Lütfen bir eposta giriniz' : null,
-                  keyboardType: TextInputType.emailAddress,
                   onChanged: (val) {
                     //get the text whenever value changed
                     setState(() => email = val);

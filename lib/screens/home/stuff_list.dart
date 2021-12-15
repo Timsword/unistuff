@@ -24,10 +24,10 @@ class _StuffListState extends State<StuffList> {
     }
     return ListView.builder(
       //listede bulunan eşyaların sayısı
-      itemCount: stuffs!.length,
+      itemCount: stuffs?.length ?? 0,
       //liste içindeki her eşya için geriye bir çeşit widget gönderecek func.
       itemBuilder: (context, index) {
-        return StuffGrid(stuff: stuffs[index]);
+        return StuffGrid(stuff: stuffs![index]);
       },
     );
   }

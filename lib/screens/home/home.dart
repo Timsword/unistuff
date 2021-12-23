@@ -1,9 +1,18 @@
 import "package:flutter/material.dart";
+import 'package:unistuff_main/screens/home/setting_form.dart';
 import 'package:unistuff_main/services/auth.dart';
 import 'package:unistuff_main/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:unistuff_main/screens/home/stuff_list.dart';
 import 'package:unistuff_main/models/stuff.dart';
+
+/*void newStuff(String text) {
+  var stuff = new Stuff(text, widget.name);
+  stuff.setId(saveStuff(stuff));
+  this.setState(() {
+    stuffs.add(stuff);
+  });
+}*/
 
 class Home extends StatelessWidget {
   //const Home({Key? key}) : super(key: key);
@@ -12,6 +21,17 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _addStuff(BuildContext context) {
+      showModalBottomSheet<dynamic>(
+          isScrollControlled: true,
+          context: context,
+          builder: (context) {
+            return Container(
+                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+                child: SettingsForm());
+          });
+    }
+
     return StreamProvider<List<Stuff>?>.value(
       initialData: null,
       value: DatabaseService().stuffs,
@@ -28,6 +48,11 @@ class Home extends StatelessWidget {
               onPressed: () async {
                 await _auth.signOut();
               },
+            ),
+            TextButton.icon(
+              icon: Icon(Icons.add),
+              label: Text('Ürün ekle'),
+              onPressed: () => _addStuff(context),
             )
           ],
         ),

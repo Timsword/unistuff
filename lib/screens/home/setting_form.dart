@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
+import 'package:unistuff_main/models/myuser.dart';
 
 class SettingsForm extends StatefulWidget {
   const SettingsForm({Key? key}) : super(key: key);
@@ -13,11 +15,15 @@ class _SettingsFormState extends State<SettingsForm> {
   final _formkey = GlobalKey<FormState>();
   final List<String> categories = ["Spor", "Vasıta", "Elektronik"];
   addStuff() {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user!.uid;
     FirebaseFirestore.instance.collection('Stuffs').doc(_currentTitle).set({
       'title': _currentTitle,
       'details': _currentDetails,
       'price': _currentPrice,
-      'category': _currentCategory
+      'category': _currentCategory,
+      'userID': uid
     });
   }
 

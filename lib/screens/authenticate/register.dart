@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:unistuff_main/services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /* String validateEmail(String? value) {
   String pattern =
@@ -36,33 +38,31 @@ class _RegisterState extends State<Register> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   addUserToDatabase() {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
+    FirebaseFirestore.instance.collection('users').doc(email).set(
+        {'email': email, 'name': name, 'username': username, 'userID': uid});
+  }
+
+  setUserID() {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user?.uid;
     FirebaseFirestore.instance
         .collection('users')
         .doc(email)
-        .set({'email': email, 'name': name, 'username': username});
+        .update({'userID': uid});
   }
 
-  checkUsername() async {
-    //kullanıcı adının daha önceden alınıp alınmadığını kontrol etme
-    ////////////////////////çalışmıyor
-    //string _username with the userName of each user.
-    final QuerySnapshot result = await FirebaseFirestore.instance
+  var _instance = FirebaseFirestore.instance;
+
+  Future<bool> usernameCheck(String username) async {
+    final result = await FirebaseFirestore.instance
         .collection('users')
         .where('username', isEqualTo: username)
         .get();
-
-    //converts results to a list of documents
-    final List<DocumentSnapshot> documents = result.docs;
-
-    //checks the length of the document to see if its
-    //greater than 0 which means the username has already been taken the name
-    if (documents.length > 0) {
-      print(username + ' adının bir sahibi var!');
-      return false;
-    } else {
-      print(username + ' are you sure you want to use this name');
-      return true;
-    }
+    return result.docs.isEmpty;
   }
 
   @override
@@ -135,21 +135,18 @@ class _RegisterState extends State<Register> {
               ElevatedButton(
                 child: Text("Üye ol"),
                 onPressed: () async {
-                  if (checkUsername == false) {
-                    //kullanıcı adının daha önceden alınıp alınmadığını kontrol etme
-                    setState(////////////////////çalışmıyor
-                        () => error = username + ' adının bir sahibi var!');
-                    print("epik");
-                    return;
-                  }
-
-                  addUserToDatabase(); //kullancı bilgilerini veritabanına yükle
-                  if (_formKey.currentState!.validate()) {
-                    dynamic result = await _auth.regiterWithEmailAndPassword(
-                        email, password);
-                    if (result == null) {
-                      setState(
-                          () => error = 'Lütfen geçerli bir eposta giriniz.');
+                  final valid = await usernameCheck(username);
+                  if (!valid) {
+                    //bu kullanıcı adı daha önce alındı. ekranda bir uyarı göster.
+                  } else if (_formKey.currentState!.validate()) {
+                    if (_formKey.currentState!.validate()) {
+                      dynamic result = await _auth.regiterWithEmailAndPassword(
+                          email, password);
+                      if (result == null) {
+                        setState(
+                            () => error = 'Lütfen geçerli bir eposta giriniz.');
+                      }
+                      addUserToDatabase(); //kullancı bilgilerini veritabanına yükle
                     }
                   }
                 },

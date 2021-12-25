@@ -11,22 +11,31 @@ class SettingsForm extends StatefulWidget {
 
 class _SettingsFormState extends State<SettingsForm> {
   final _formkey = GlobalKey<FormState>();
-
+  final List<String> categories = ["Spor", "Vasıta", "Elektronik"];
   addStuff() {
-    FirebaseFirestore.instance
-        .collection('Stuffs')
-        .doc(_currentTitle)
-        .set({'title': _currentTitle, 'details': _currentDetails});
+    FirebaseFirestore.instance.collection('Stuffs').doc(_currentTitle).set({
+      'title': _currentTitle,
+      'details': _currentDetails,
+      'price': _currentPrice,
+      'category': _currentCategory
+    });
+  }
+
+  bool validatePrice(String str) {
+    RegExp _numeric = RegExp(r'^-?[0-9]+$');
+    return _numeric.hasMatch(str);
   }
 
   String title = '';
   String details = '';
   String category = '';
+  String price = "";
 
   //form values
   String? _currentTitle;
   String? _currentDetails;
-  int? _currentPrice;
+  String? _currentPrice;
+  String? _currentCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +52,15 @@ class _SettingsFormState extends State<SettingsForm> {
             TextFormField(
               decoration: InputDecoration(
                   fillColor: Colors.brown, hintText: 'Başlık', filled: true),
-              validator: (val) =>
-                  val!.isEmpty ? 'Lütfen bir başlık giriniz' : null,
+              validator: (val) {
+                if ((validatePrice(val!) == false)) {
+                  return "Lütfen bir sayı giriniz";
+                }
+                if (val.isEmpty == true) {
+                  return "Lütfen bir fiyat giriniz";
+                }
+                return null;
+              },
               onChanged: (val) => setState(() => _currentTitle = val),
             ),
             SizedBox(height: 20.0),
@@ -64,9 +80,19 @@ class _SettingsFormState extends State<SettingsForm> {
                   fillColor: Colors.brown, hintText: 'Fiyat', filled: true),
               validator: (val) =>
                   val!.isEmpty ? 'Lütfen bir fiyat giriniz' : null,
-              onChanged: (val) => setState(() => _currentPrice = val as int?),
+              onChanged: (val) => setState(() => _currentPrice = val),
             ),
             SizedBox(height: 20.0),
+            DropdownButtonFormField(
+              items: categories.map((category) {
+                return DropdownMenuItem(
+                  value: category,
+                  child: Text('$category'),
+                );
+              }).toList(),
+              onChanged: (val) =>
+                  setState(() => _currentCategory = val as String?),
+            ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: Colors.pink[400],
@@ -74,8 +100,6 @@ class _SettingsFormState extends State<SettingsForm> {
               child: Text('Ekle', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 addStuff();
-                print(_currentTitle);
-                print(_currentDetails);
               },
             ),
           ],

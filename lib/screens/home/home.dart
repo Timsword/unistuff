@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
 import 'package:unistuff_main/screens/home/setting_form.dart';
 import 'package:unistuff_main/services/auth.dart';
@@ -18,6 +19,10 @@ class Home extends StatelessWidget {
   //const Home({Key? key}) : super(key: key);
 
   final AuthService _auth = AuthService();
+  var gelenTitle = '';
+  var gelenDetails = '';
+  var gelenPrice = '';
+  var gelenCategory = '';
 
   @override
   Widget build(BuildContext context) {

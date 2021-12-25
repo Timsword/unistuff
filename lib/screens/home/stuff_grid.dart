@@ -18,10 +18,17 @@ class StuffGrid extends StatelessWidget {
           child: ListTile(
             leading: CircleAvatar(
               radius: 25.0,
-              backgroundColor: Colors.brown[stuff!.price],
+              backgroundColor: Colors.brown,
             ),
             title: Text(stuff!.title),
-            subtitle: Text(stuff!.details),
+            subtitle: Column(
+              children: <Widget>[
+                Text('Title2'),
+                Text('Title 3'),
+                Text('Title 4'),
+                Text('and so on')
+              ],
+            ),
           ),
         ));
   }

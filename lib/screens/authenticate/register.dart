@@ -124,7 +124,7 @@ class _RegisterState extends State<Register> {
               TextFormField(
                   //password
                   decoration: InputDecoration(hintText: 'Şifre'),
-                  validator: (val) => val!.length < 6 //boşsa uyarı
+                  validator: (val) => val!.length < 6 //kısaysa uyarı
                       ? 'Lütfen altı karakterden uzun bir şifre giriniz'
                       : null,
                   obscureText: true,

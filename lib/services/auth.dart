@@ -37,11 +37,6 @@ class AuthService {
           email: email, password: password);
       User user = result.user!;
 
-      //create new doc for the user with the uid
-      ////başlangıç değeri atamaları
-      await DatabaseService(uid: user.uid)
-          .updateUserStuff('a new stuff', 'about my stuff', 100);
-
       return _userfromFirebase(user);
     } catch (e) {
       print(e.toString());

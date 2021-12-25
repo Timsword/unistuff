@@ -10,11 +10,13 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('stuffs');
 
   //ilan oluşturmak için veritabanı verisi title, details, price vb.
-  Future updateUserStuff(String title, String details, int price) async {
+  Future updateUserStuff(
+      String title, String details, String price, String category) async {
     return await stuffCollection.doc(uid).set({
       'title': title,
       'details': details,
       'price': price,
+      'category': category,
     });
   }
 
@@ -23,8 +25,9 @@ class DatabaseService {
     return snapshot.docs.map((doc) {
       return Stuff(
           title: doc.get('title') ?? '',
-          price: doc.get('price') ?? 0,
-          details: doc.get('details') ?? '');
+          price: doc.get('price') ?? '',
+          details: doc.get('details') ?? '',
+          category: doc.get('category'));
     }).toList();
   }
 

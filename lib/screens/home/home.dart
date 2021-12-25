@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
-import 'package:unistuff_main/screens/home/setting_form.dart';
+import 'package:unistuff_main/screens/home/stuff_form.dart';
 import 'package:unistuff_main/services/auth.dart';
 import 'package:unistuff_main/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:unistuff_main/screens/home/stuff_list.dart';
 import 'package:unistuff_main/models/stuff.dart';
+import 'profile_sheet.dart';
 
 /*void newStuff(String text) {
   var stuff = new Stuff(text, widget.name);
@@ -33,7 +34,18 @@ class Home extends StatelessWidget {
           builder: (context) {
             return Container(
                 padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-                child: SettingsForm());
+                child: StuffForm());
+          });
+    }
+
+    void _viewProfile(BuildContext context) {
+      showModalBottomSheet<dynamic>(
+          isScrollControlled: true,
+          context: context,
+          builder: (context) {
+            return Container(
+                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+                child: profileSheet());
           });
     }
 
@@ -58,6 +70,11 @@ class Home extends StatelessWidget {
               icon: Icon(Icons.add),
               label: Text('Ürün ekle'),
               onPressed: () => _addStuff(context),
+            ),
+            TextButton.icon(
+              icon: Icon(Icons.person),
+              label: Text('Profil'),
+              onPressed: () => _viewProfile(context),
             )
           ],
         ),

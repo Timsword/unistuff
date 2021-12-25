@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'package:unistuff_main/models/myuser.dart';
 
-class SettingsForm extends StatefulWidget {
-  const SettingsForm({Key? key}) : super(key: key);
+class StuffForm extends StatefulWidget {
+  const StuffForm({Key? key}) : super(key: key);
 
   @override
-  _SettingsFormState createState() => _SettingsFormState();
+  _StuffFormState createState() => _StuffFormState();
 }
 
-class _SettingsFormState extends State<SettingsForm> {
+class _StuffFormState extends State<StuffForm> {
   final _formkey = GlobalKey<FormState>();
   final List<String> categories = ["Spor", "Vasıta", "Elektronik"];
   addStuff() {

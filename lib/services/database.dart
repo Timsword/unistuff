@@ -32,7 +32,7 @@ class DatabaseService {
   }
 
   CollectionReference _collectionRef =
-      FirebaseFirestore.instance.collection('Stuffs');
+      FirebaseFirestore.instance.collection('stuffs');
 
   Future<void> getData() async {
     // Get docs from collection reference

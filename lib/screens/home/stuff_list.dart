@@ -1,34 +1,44 @@
-import 'package:flutter/material.dart';
-import 'package:unistuff_main/models/stuff.dart';
-import 'package:provider/provider.dart';
-import 'package:unistuff_main/screens/home/stuff_grid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import "package:flutter/material.dart";
 
-class StuffList extends StatefulWidget {
+class StuffList extends StatelessWidget {
   const StuffList({Key? key}) : super(key: key);
 
   @override
-  _StuffListState createState() => _StuffListState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _stuffList(),
+    );
+  }
 }
 
-class _StuffListState extends State<StuffList> {
+class _stuffList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final stuffs = Provider.of<List<Stuff>?>(context);
-    //print(stuffs?.docs);
-    if (stuffs != null) {
-      stuffs.forEach((stuff) {
-        print(stuff.title);
-        print(stuff.details);
-        print(stuff.price);
-      });
-    }
-    return ListView.builder(
-      //listede bulunan eşyaların sayısı
-      itemCount: stuffs?.length ?? 0,
-      //liste içindeki her eşya için geriye bir çeşit widget gönderecek func.
-      itemBuilder: (context, index) {
-        return StuffGrid(stuff: stuffs![index]);
-      },
-    );
+    final Stream<QuerySnapshot> _usersStream =
+        FirebaseFirestore.instance.collection('Stuffs').snapshots();
+
+    return StreamBuilder<QuerySnapshot>(
+        stream: _usersStream,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something went wrong');
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text("Loading");
+          }
+
+          return ListView(
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              return ListTile(
+                title: Text(data['title']),
+                subtitle: Text(data['details']),
+              );
+            }).toList(),
+          );
+        });
   }
 }

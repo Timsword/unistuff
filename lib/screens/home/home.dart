@@ -17,17 +17,35 @@ import 'profile_sheet.dart';
 }*/
 
 class Home extends StatelessWidget {
-  //const Home({Key? key}) : super(key: key);
-
-  final AuthService _auth = AuthService();
-  var gelenTitle = '';
-  var gelenDetails = '';
-  var gelenPrice = '';
-  var gelenCategory = '';
+  //const _Home({ Key? key }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: _Home(),
+    );
+  }
+}
+
+class _Home extends StatelessWidget {
+  //const Home({Key? key}) : super(key: key);
+
+  final AuthService _auth = AuthService();
+  var getTitle = '';
+  var getDetails = '';
+  var getPrice = '';
+  var getCategory = '';
+  var getFavoriteNo = '';
+  var dateTime = '';
+  var userID = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final Stream<QuerySnapshot> _usersStream =
+        FirebaseFirestore.instance.collection('Stuffs').snapshots();
+
     void _addStuff(BuildContext context) {
+      //stuff_form'a yönlendirme.
       showModalBottomSheet<dynamic>(
           isScrollControlled: true,
           context: context,

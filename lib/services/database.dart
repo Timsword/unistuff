@@ -24,10 +24,10 @@ class DatabaseService {
   List<Stuff> _stuffListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return Stuff(
-          title: doc.get('title') ?? '',
-          price: doc.get('price') ?? '',
-          details: doc.get('details') ?? '',
-          category: doc.get('category'));
+          title: doc.get('title') ?? '0',
+          price: doc.get('price') ?? '0',
+          details: doc.get('details') ?? '0',
+          category: doc.get('category') ?? '');
     }).toList();
   }
 

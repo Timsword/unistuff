@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'package:unistuff_main/models/myuser.dart';
+import 'package:uuid/uuid.dart';
 
 class StuffForm extends StatefulWidget {
   const StuffForm({Key? key}) : super(key: key);
@@ -17,13 +18,18 @@ class _StuffFormState extends State<StuffForm> {
   addStuff() {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
-    final uid = user!.uid;
-    FirebaseFirestore.instance.collection('Stuffs').doc(_currentTitle).set({
+    final _uid = user!.uid;
+    String _stuffID = Uuid().v4();
+    String _dateTime = DateTime.now().toString();
+    FirebaseFirestore.instance.collection('Stuffs').doc(_stuffID).set({
+      'stuffID': _stuffID,
       'title': _currentTitle,
       'details': _currentDetails,
       'price': _currentPrice,
       'category': _currentCategory,
-      'userID': uid
+      'favoriteNumber': 0,
+      'dateTime': _dateTime,
+      'userID': _uid
     });
   }
 

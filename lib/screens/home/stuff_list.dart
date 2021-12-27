@@ -15,21 +15,27 @@ class StuffList extends StatelessWidget {
 class _stuffList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _usersStream =
-        FirebaseFirestore.instance.collection('Stuffs').snapshots();
+    final Stream<QuerySnapshot> _stuffStream = FirebaseFirestore.instance
+        .collection('Stuffs') //seçilen döküman
+        .orderBy('dateTime',
+            descending: true) //veriler yeniden eskiye şeklinde listeleniyor
+        .snapshots();
 
     return StreamBuilder<QuerySnapshot>(
-        stream: _usersStream,
+        //veri akışı başlatılıyor
+        //akış oluşturuluyor
+        stream: _stuffStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return Text('Something went wrong');
+            return Text('Bir hata oluştu, tekrar deneyiniz.');
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Loading");
+            return Text("Yükleniyor");
           }
 
           return ListView(
+            //veriyi gösterme kısmı
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;

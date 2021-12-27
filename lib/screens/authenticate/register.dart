@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:unistuff_main/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:email_validator/email_validator.dart';
 
 /* String validateEmail(String? value) {
   String pattern =
@@ -65,6 +66,14 @@ class _RegisterState extends State<Register> {
     return result.docs.isEmpty;
   }
 
+  Future<bool> emailCheck(String username) async {
+    final result = await FirebaseFirestore.instance
+        .collection('email_verification')
+        .where('domain', isEqualTo: username)
+        .get();
+    return result.docs.isEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,8 +112,48 @@ class _RegisterState extends State<Register> {
               TextFormField(
                   //e-mail
                   decoration: InputDecoration(hintText: 'E-posta'),
-                  validator: (val) => //boşsa uyarı
-                      val!.isEmpty ? 'Lütfen bir eposta giriniz' : null,
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return 'Lütfen bir eposta giriniz';
+                    } else {
+                      bool emailValid = RegExp(
+                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(val);
+                      if (!EmailValidator.validate(val)) {
+                        return "Lütfen bir e-posta giriniz.";
+                      }
+                      int dotLength =
+                          ('.'.allMatches(val..split("@").last).length);
+                      if (dotLength == 1) {
+                        //check database for akdeniz.edu.tr
+                        bool emailValid = RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.+edu+")
+                            .hasMatch(val);
+                        if (!emailValid) {
+                          return "Lütfen bir üniversite e-postası girin.";
+                        }
+                      } else if (dotLength == 2) {
+                        //check database for akdeniz.edu.tr
+                        bool emailValid = RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.+edu+\.[a-zA-Z]+")
+                            .hasMatch(val);
+                        if (!emailValid) {
+                          return "Lütfen bir üniversite e-postası girin.";
+                        }
+                      } else if (dotLength == 3) {
+                        //check database for ogr.ktu.edu.tr
+                        bool emailValid = RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.+edu+\.[a-zA-Z]+")
+                            .hasMatch(val);
+                        if (!emailValid) {
+                          return "Lütfen bir üniversite e-postası girin.";
+                        }
+                      } else {
+                        return "Bu e-posta şu anda desteklenmemektedir.";
+                      }
+                    }
+                    null;
+                  },
                   keyboardType: TextInputType.emailAddress, //klavyeye @ ekleme
                   onChanged: (val) {
                     //get the text whenever value changed

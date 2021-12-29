@@ -1,8 +1,10 @@
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'constants.dart';
-import 'package:unistuff_main/models/myuser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class StuffForm extends StatefulWidget {
@@ -29,8 +31,49 @@ class _StuffFormState extends State<StuffForm> {
       'category': _currentCategory,
       'favoriteNumber': 0,
       'dateTime': _dateTime,
-      'userID': _uid
+      'userID': _uid,
+      'soldOrNot': 'in sale',
     });
+    return _stuffID;
+  }
+
+  var _instance = FirebaseFirestore.instance;
+  FirebaseAuth auth_ = FirebaseAuth.instance;
+  File? image;
+  String? downloadLink;
+  Future pickStuffImage() async {
+    var fileToUpload =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null) print("null don");
+    setState(() {
+      image = File(fileToUpload!.path);
+    });
+    return image;
+  }
+
+  Future addStuffImageToDatabase(stuffID, image) async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user!.uid;
+    Reference referenceWay = FirebaseStorage.instance
+        .ref()
+        .child('stuffPics')
+        .child(uid)
+        .child(stuffID)
+        .child("stuffPic.png");
+    print(uid);
+
+    UploadTask uploadTask = referenceWay.putFile(image!);
+    TaskSnapshot downloadURL = (await uploadTask);
+    String url = await downloadURL.ref.getDownloadURL();
+    FirebaseFirestore.instance
+        .collection('Stuffs')
+        .doc(stuffID)
+        .update({'stuffImage': url});
+  }
+
+  storeImage(image) async {
+    return image;
   }
 
   bool validatePrice(String str) {
@@ -105,13 +148,20 @@ class _StuffFormState extends State<StuffForm> {
               onChanged: (val) =>
                   setState(() => _currentCategory = val as String?),
             ),
+            TextButton.icon(
+              icon: Icon(Icons.add),
+              label: Text('Fotoğraf ekle'),
+              onPressed: () {
+                Future<dynamic> image = (pickStuffImage());
+              },
+            ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: Colors.pink[400],
               ),
               child: Text('Ekle', style: TextStyle(color: Colors.white)),
               onPressed: () async {
-                addStuff();
+                addStuffImageToDatabase(addStuff(), image);
               },
             ),
           ],

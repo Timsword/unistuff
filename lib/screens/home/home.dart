@@ -90,6 +90,9 @@ class _HomeState extends State<_Home> {
     File? image;
     String? downloadLink;
     Future pickProfileImage() async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final User? user = auth.currentUser;
+      final uid = user!.uid;
       var fileToUpload =
           await ImagePicker().pickImage(source: ImageSource.camera);
       if (image == null) print("null don");
@@ -100,15 +103,12 @@ class _HomeState extends State<_Home> {
       Reference referenceWay = FirebaseStorage.instance
           .ref()
           .child('profilePics')
-          .child(auth_.currentUser!.uid)
+          .child(uid)
           .child("profilPic.png");
 
       UploadTask uploadTask = referenceWay.putFile(image!);
       TaskSnapshot downloadURL = (await uploadTask);
       String url = await downloadURL.ref.getDownloadURL();
-      final FirebaseAuth auth = FirebaseAuth.instance;
-      final User? user = auth.currentUser;
-      final uid = user?.uid;
       FirebaseFirestore.instance
           .collection('users')
           .doc(uid)

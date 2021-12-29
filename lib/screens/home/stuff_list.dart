@@ -15,22 +15,35 @@ class StuffList extends StatelessWidget {
 }
 
 class _stuffList extends StatelessWidget {
-  favorite(stuffID) {
-    //GAYET İYİ ÇALIŞIYOR TEK SIKINTISI COLLECTION BOŞSA İF ELSE KOŞULUNA SOKMAN LAZIM
+  favorite(stuffID) async {
+    Future<bool> checkIfDocExists(String docId) async {
+      try {
+        /// Check If Document Exists
+        // Get reference to Firestore collection
+        var collectionRef = FirebaseFirestore.instance.collection('favorites');
+
+        var doc = await collectionRef.doc(docId).get();
+        return doc.exists;
+      } catch (e) {
+        throw e;
+      }
+    }
+
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final userID = user!.uid;
-    if (FirebaseFirestore.instance
-            .collection('favorites')
-            .doc(userID + "-" + stuffID) ==
-        null) {
-      //eğer favorilere eklemediyse eklemesini sağla
+
+    bool docExists = await checkIfDocExists(userID + "-" + stuffID);
+
+    if (docExists == true) {
+      //favorilerden çıkar
       FirebaseFirestore.instance
           .collection('favorites')
           .doc(userID + "-" + stuffID)
           .delete();
+      print(userID);
     } else {
-      //favorilerden çıkar
+      //eğer favorilere eklemediyse eklemesini sağla
       FirebaseFirestore.instance
           .collection('favorites')
           .doc(userID + "-" + stuffID)
@@ -81,7 +94,7 @@ class _stuffList extends StatelessWidget {
                       icon: Icon(Icons.favorite),
                       label: Text('Favori'),
                       onPressed: () async {
-                        //favorite(data['stuffID']);
+                        favorite(data['stuffID']);
                       },
                     ),
                   ],

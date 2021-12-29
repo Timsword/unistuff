@@ -58,7 +58,7 @@ class _userStuffList extends StatelessWidget {
         });
   }
 
-  _deleteStuff(BuildContext context) {
+  /* _deleteStuff(BuildContext context) {
     //stuff_form'a yönlendirme.
     showModalBottomSheet<dynamic>(
         isScrollControlled: true,
@@ -68,13 +68,19 @@ class _userStuffList extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
               child: updateStuffForm());
         });
-  }
+  }*/
 
   deleteStuff(stuffID) {
-    final FirebaseAuth auth = FirebaseAuth.instance;
+    /*final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
-    final _uid = user!.uid;
+    final _uid = user!.uid;*/
     FirebaseFirestore.instance.collection('Stuffs').doc(stuffID).delete();
+  }
+
+  markAsSold(stuffID) {
+    FirebaseFirestore.instance.collection('Stuffs').doc(stuffID).update({
+      'soldOrNot': 'sold',
+    });
   }
 
   @override
@@ -126,6 +132,11 @@ class _userStuffList extends StatelessWidget {
                           child: const Text('Sil'),
                           onPressed: () {
                             deleteStuff(stuffID);
+                          }),
+                      TextButton(
+                          child: const Text('Satıldı olarak işaretle'),
+                          onPressed: () {
+                            markAsSold(stuffID);
                           })
                     ],
                   ),

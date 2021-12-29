@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
+import 'package:unistuff_main/screens/home/chat_page.dart';
 
 class StuffList extends StatelessWidget {
   const StuffList({Key? key}) : super(key: key);
@@ -41,7 +42,19 @@ class _stuffList extends StatelessWidget {
                   document.data()! as Map<String, dynamic>;
               return ListTile(
                 title: Text(data['title']),
-                subtitle: Text(data['details']),
+                subtitle: Column(
+                  children: <Widget>[
+                    Text(data['details']),
+                    TextButton(
+                        child: const Text('Mesaj'),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ChatPage(docs: data)));
+                        })
+                  ],
+                ),
               );
             }).toList(),
           );

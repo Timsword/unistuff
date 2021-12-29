@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:unistuff_main/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:email_validator/email_validator.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 /* String validateEmail(String? value) {
   String pattern =
@@ -56,8 +58,6 @@ class _RegisterState extends State<Register> {
         .update({'userID': uid});
   }
 
-  var _instance = FirebaseFirestore.instance;
-
   Future<bool> usernameCheck(String username) async {
     final result = await FirebaseFirestore.instance
         .collection('users')
@@ -66,12 +66,35 @@ class _RegisterState extends State<Register> {
     return result.docs.isEmpty;
   }
 
-  Future<bool> emailCheck(String username) async {
+  /*Future<bool> emailCheck(String username) async {
     final result = await FirebaseFirestore.instance
         .collection('email_verification')
         .where('domain', isEqualTo: username)
         .get();
     return result.docs.isEmpty;
+  }*/
+
+  var _instance = FirebaseFirestore.instance;
+  FirebaseAuth auth_ = FirebaseAuth.instance;
+  File? image;
+  String? downloadLink;
+  Future pickImage() async {
+    var fileToUpload =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (image == null) return;
+    setState(() {
+      image = File(fileToUpload!.path);
+    });
+
+    Reference referenceWay = FirebaseStorage.instance
+        .ref()
+        .child('profilePics')
+        .child(auth_.currentUser!.uid)
+        .child("profilPic.png");
+
+    UploadTask uploadTask = referenceWay.putFile(image!);
+    TaskSnapshot downloadURL = (await uploadTask);
+    String url = await downloadURL.ref.getDownloadURL();
   }
 
   @override
@@ -125,7 +148,7 @@ class _RegisterState extends State<Register> {
                       int dotLength =
                           ('.'.allMatches(val..split("@").last).length);
                       if (dotLength == 1) {
-                        //check database for akdeniz.edu.tr
+                        //check database for ktu.edu
                         bool emailValid = RegExp(
                                 r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.+edu+")
                             .hasMatch(val);
@@ -133,7 +156,7 @@ class _RegisterState extends State<Register> {
                           return "Lütfen bir üniversite e-postası girin.";
                         }
                       } else if (dotLength == 2) {
-                        //check database for akdeniz.edu.tr
+                        //check database for ktu.edu.tr
                         bool emailValid = RegExp(
                                 r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.+edu+\.[a-zA-Z]+")
                             .hasMatch(val);
@@ -182,6 +205,11 @@ class _RegisterState extends State<Register> {
                   }),
               SizedBox(height: 20.0),
               ElevatedButton(
+                  onPressed: () {
+                    pickImage();
+                  },
+                  child: Text('Profil resmi yükle')),
+              ElevatedButton(
                 child: Text("Üye ol"),
                 onPressed: () async {
                   final valid = await usernameCheck(username);
@@ -195,6 +223,7 @@ class _RegisterState extends State<Register> {
                         setState(
                             () => error = 'Lütfen geçerli bir eposta giriniz.');
                       }
+                      pickImage();
                       addUserToDatabase(); //kullancı bilgilerini veritabanına yükle
                     }
                   }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:unistuff_main/screens/home/chat_page.dart';
 
@@ -14,6 +15,29 @@ class StuffList extends StatelessWidget {
 }
 
 class _stuffList extends StatelessWidget {
+  favorite(stuffID) {
+    //GAYET İYİ ÇALIŞIYOR TEK SIKINTISI COLLECTION BOŞSA İF ELSE KOŞULUNA SOKMAN LAZIM
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final userID = user!.uid;
+    if (FirebaseFirestore.instance
+            .collection('favorites')
+            .doc(userID + "-" + stuffID) ==
+        null) {
+      //eğer favorilere eklemediyse eklemesini sağla
+      FirebaseFirestore.instance
+          .collection('favorites')
+          .doc(userID + "-" + stuffID)
+          .delete();
+    } else {
+      //favorilerden çıkar
+      FirebaseFirestore.instance
+          .collection('favorites')
+          .doc(userID + "-" + stuffID)
+          .set({'userID': userID, 'stuffID': stuffID});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> _stuffStream = FirebaseFirestore.instance
@@ -52,7 +76,14 @@ class _stuffList extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ChatPage(docs: data)));
-                        })
+                        }),
+                    TextButton.icon(
+                      icon: Icon(Icons.favorite),
+                      label: Text('Favori'),
+                      onPressed: () async {
+                        //favorite(data['stuffID']);
+                      },
+                    ),
                   ],
                 ),
               );

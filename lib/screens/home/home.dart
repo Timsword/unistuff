@@ -89,7 +89,7 @@ class _HomeState extends State<_Home> {
     FirebaseAuth auth_ = FirebaseAuth.instance;
     File? image;
     String? downloadLink;
-    Future pickImage() async {
+    Future pickProfileImage() async {
       var fileToUpload =
           await ImagePicker().pickImage(source: ImageSource.camera);
       if (image == null) print("null don");
@@ -126,7 +126,7 @@ class _HomeState extends State<_Home> {
           actions: <Widget>[
             ElevatedButton(
                 onPressed: () async {
-                  pickImage();
+                  pickProfileImage();
                 },
                 child: Text('Profil resmi yükle')),
             TextButton.icon(

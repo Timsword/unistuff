@@ -44,7 +44,7 @@ class _RegisterState extends State<Register> {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final uid = user?.uid;
-    FirebaseFirestore.instance.collection('users').doc(email).set(
+    FirebaseFirestore.instance.collection('users').doc(uid).set(
         {'email': email, 'name': name, 'username': username, 'userID': uid});
   }
 
@@ -73,29 +73,6 @@ class _RegisterState extends State<Register> {
         .get();
     return result.docs.isEmpty;
   }*/
-
-  var _instance = FirebaseFirestore.instance;
-  FirebaseAuth auth_ = FirebaseAuth.instance;
-  File? image;
-  String? downloadLink;
-  Future pickImage() async {
-    var fileToUpload =
-        await ImagePicker().pickImage(source: ImageSource.camera);
-    if (image == null) return;
-    setState(() {
-      image = File(fileToUpload!.path);
-    });
-
-    Reference referenceWay = FirebaseStorage.instance
-        .ref()
-        .child('profilePics')
-        .child(auth_.currentUser!.uid)
-        .child("profilPic.png");
-
-    UploadTask uploadTask = referenceWay.putFile(image!);
-    TaskSnapshot downloadURL = (await uploadTask);
-    String url = await downloadURL.ref.getDownloadURL();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -205,10 +182,7 @@ class _RegisterState extends State<Register> {
                   }),
               SizedBox(height: 20.0),
               ElevatedButton(
-                  onPressed: () {
-                    pickImage();
-                  },
-                  child: Text('Profil resmi yükle')),
+                  onPressed: () {}, child: Text('Profil resmi yükle')),
               ElevatedButton(
                 child: Text("Üye ol"),
                 onPressed: () async {
@@ -223,7 +197,6 @@ class _RegisterState extends State<Register> {
                         setState(
                             () => error = 'Lütfen geçerli bir eposta giriniz.');
                       }
-                      pickImage();
                       addUserToDatabase(); //kullancı bilgilerini veritabanına yükle
                     }
                   }

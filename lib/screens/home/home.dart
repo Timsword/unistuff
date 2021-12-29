@@ -92,10 +92,9 @@ class _HomeState extends State<_Home> {
     Future pickImage() async {
       var fileToUpload =
           await ImagePicker().pickImage(source: ImageSource.camera);
-      if (image == null) print("Bu değer yok");
+      if (image == null) print("null don");
       setState(() {
         image = File(fileToUpload!.path);
-        print("Deneme amaçlı" + image.toString());
       });
 
       Reference referenceWay = FirebaseStorage.instance
@@ -107,28 +106,14 @@ class _HomeState extends State<_Home> {
       UploadTask uploadTask = referenceWay.putFile(image!);
       TaskSnapshot downloadURL = (await uploadTask);
       String url = await downloadURL.ref.getDownloadURL();
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final User? user = auth.currentUser;
+      final uid = user?.uid;
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .update({'profileImage': url});
     }
-
-    /*final picker = ImagePicker();
-    File? _imageFile;
-    Future pickImage() async {
-      final pickedFile = await picker.pickImage(source: ImageSource.camera);
-
-      setState(() {
-        _imageFile = File(pickedFile!.path);
-      });
-    }
-
-    Future uploadImageToFirebase(BuildContext context) async {
-      String fileName = (_imageFile!.path);
-      Reference firebaseStorageRef =
-          FirebaseStorage.instance.ref().child('uploads/$fileName');
-      UploadTask uploadTask = firebaseStorageRef.putFile(_imageFile!);
-      TaskSnapshot taskSnapshot = await uploadTask;
-      taskSnapshot.ref.getDownloadURL().then(
-            (value) => print("Done: $value"),
-          );
-    }*/
 
     return StreamProvider<List<Stuff>?>.value(
       initialData: null,
@@ -141,24 +126,6 @@ class _HomeState extends State<_Home> {
           actions: <Widget>[
             ElevatedButton(
                 onPressed: () async {
-                  /*XFile? imageXFile;
-                  final ImagePicker _picker = ImagePicker();
-                  String sellerImageURL = '';
-                  String fileName =
-                      DateTime.now().microsecondsSinceEpoch.toString();
-                  Reference reference2 = FirebaseStorage.instance
-                      .ref()
-                      .child('profilePics')
-                      .child(fileName);
-                  UploadTask uploadTask2 =
-                      reference2.putFile(File(imageXFile!.path));
-                  TaskSnapshot taskSnapshot2 =
-                      await uploadTask2.whenComplete(() {});
-                  await taskSnapshot2.ref.getDownloadURL().then((url) {
-                    sellerImageURL = url;
-
-                    //save info to firestore
-                  });*/
                   pickImage();
                 },
                 child: Text('Profil resmi yükle')),

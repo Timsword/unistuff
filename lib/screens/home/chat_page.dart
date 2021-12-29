@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatPage extends StatefulWidget {
   final docs; //ID of the user from the stuff
@@ -44,11 +43,11 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat page!'),
+        title: Text(widget.docs['title']),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('messages')
+            .collection('messages') //pulling the messages from the database
             .doc(groupChatId)
             .collection(groupChatId!)
             .orderBy('timestamp', descending: true)
@@ -62,6 +61,7 @@ class _ChatPageState extends State<ChatPage> {
               children: <Widget>[
                 Expanded(
                     child: ListView.builder(
+                  //importing the message snapshots into a list
                   controller: scrollController,
                   itemBuilder: (listContext, index) => buildItem(
                       (snapshot.data! as QuerySnapshot).docs[index], userID),
@@ -102,14 +102,15 @@ class _ChatPageState extends State<ChatPage> {
     String msg = textEditingController.text.trim();
 
     /// Upload images to firebase and returns a URL
-    ///
+    ///COULD BE ADDED IN FUTURE UPDATES
 
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final userID = user!.uid;
 
     if (msg.isNotEmpty) {
-      print('thisiscalled $msg');
+      print(
+          'thisiscalled $msg'); //create a message with particular users informations.
       var ref = FirebaseFirestore.instance
           .collection('messages')
           .doc(groupChatId)
@@ -121,19 +122,21 @@ class _ChatPageState extends State<ChatPage> {
           "anotherUserId": widget.docs['userID'],
           "timestamp": DateTime.now().millisecondsSinceEpoch.toString(),
           'content': msg,
-          "type": 'text',
+          "type": 'text', //type of the message.
         });
       });
 
       scrollController.animateTo(0.0,
           duration: Duration(milliseconds: 100), curve: Curves.bounceInOut);
     } else {
+      //empty text
       print('Please enter some text to send');
     }
   }
 
   buildItem(doc, userID) {
     return Padding(
+      //deisgn of chat
       padding: EdgeInsets.only(
           top: 8.0,
           left: ((doc['senderId'] == userID) ? 64 : 0),

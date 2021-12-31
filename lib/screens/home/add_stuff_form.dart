@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -61,7 +60,6 @@ class _StuffFormState extends State<StuffForm> {
         .child(uid)
         .child(stuffID)
         .child("stuffPic.png");
-    print(uid);
 
     UploadTask uploadTask = referenceWay.putFile(image!);
     TaskSnapshot downloadURL = (await uploadTask);

@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:unistuff_main/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:email_validator/email_validator.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 /* String validateEmail(String? value) {
   String pattern =
@@ -181,8 +178,6 @@ class _RegisterState extends State<Register> {
                     setState(() => password = val);
                   }),
               SizedBox(height: 20.0),
-              ElevatedButton(
-                  onPressed: () {}, child: Text('Profil resmi yükle')),
               ElevatedButton(
                 child: Text("Üye ol"),
                 onPressed: () async {

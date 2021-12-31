@@ -3,18 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:unistuff_main/screens/home/chat_page.dart';
 
-class StuffList extends StatelessWidget {
-  const StuffList({Key? key}) : super(key: key);
+class favoriteStuffList extends StatelessWidget {
+  const favoriteStuffList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _stuffList(),
+      body: _favoriteStuffList(),
     );
   }
 }
 
-class _stuffList extends StatelessWidget {
+class _favoriteStuffList extends StatelessWidget {
   favorite(stuffID) async {
     Future<bool> checkIfDocExists(String docId) async {
       try {
@@ -58,12 +58,28 @@ class _stuffList extends StatelessWidget {
     }
   }
 
+  List<String> myFavoriteStuffs = [];
+  Future<List<String>> getFavorites() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final userID = user!.uid;
+    var result = await FirebaseFirestore.instance
+        .collection('favorites')
+        .where("userID", whereIn: [userID]).get();
+    for (var res in result.docs) {
+      myFavoriteStuffs.add((res.data()['stuffID'] ?? ''));
+    }
+
+    return myFavoriteStuffs;
+  }
+
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> _stuffStream = FirebaseFirestore.instance
         .collection('Stuffs') //seçilen döküman
-        .orderBy('dateTime',
-            descending: true) //veriler yeniden eskiye şeklinde listeleniyor
+        .where('stuffID',
+            isEqualTo:
+                getFavorites()) //veriler yeniden eskiye şeklinde listeleniyor
         .snapshots();
 
     return StreamBuilder<QuerySnapshot>(
@@ -85,9 +101,10 @@ class _stuffList extends StatelessWidget {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
               return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(data['stuffImage']),
-                ),
+                /*leading: CircleAvatar(
+                  backgroundImage: AssetImage(
+                      "https://www.kaspersky.com.tr/content/tr-tr/images/smb/icons/icon-ksos.png"), // no matter how big it is, it won't overflow
+                ),*/
                 /*leading: SizedBox(
                     height: 100.0,
                     width: 100.0, // fixed width and height
@@ -105,11 +122,12 @@ class _stuffList extends StatelessWidget {
                                   builder: (context) => ChatPage(docs: data)));
                         }),
                     TextButton.icon(
-                        icon: Icon(Icons.favorite),
-                        label: Text('Favori'),
-                        onPressed: () async {
-                          favorite(data['stuffID']);
-                        }),
+                      icon: Icon(Icons.favorite),
+                      label: Text('Favori'),
+                      onPressed: () async {
+                        favorite(data['stuffID']);
+                      },
+                    ),
                   ],
                 ),
               );

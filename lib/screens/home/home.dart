@@ -10,9 +10,9 @@ import 'package:unistuff_main/services/auth.dart';
 import 'package:unistuff_main/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:unistuff_main/screens/home/stuff_list.dart';
+import 'package:unistuff_main/screens/home/favorite_list.dart';
 import 'package:unistuff_main/models/stuff.dart';
 import 'profile_sheet.dart';
-import 'package:unistuff_main/screens/home/update_stuff_form.dart';
 
 /*void newStuff(String text) {
   var stuff = new Stuff(text, widget.name);

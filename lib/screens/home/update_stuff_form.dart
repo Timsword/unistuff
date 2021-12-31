@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:unistuff_main/models/stuff.dart';
 //import 'package:unistuff_main/screens/home/profile_sheet.dart';
 
 class updateStuffForm extends StatefulWidget {
@@ -46,6 +48,31 @@ class _updateStuffFormState extends State<updateStuffForm> {
       'userID': _uid
     });
   }
+
+  /*getData(stuffID) async {
+    return await FirebaseFirestore.instance
+        .collection('Stuffs')
+        .get()
+        .then((value) {
+      if (value.docs.length > 0) {
+        print(value.doc(stuffID).data()['title'] ?? '');
+      } else {
+        print("Not Found");
+      }
+    });
+  }*/
+
+  /*fetchStuff(stuffID) async {
+    var userKey;
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('stuffID')
+        .doc(stuffID)
+        .get();
+    print(snapshot.data()!['title'] ?? '');
+
+    return userKey['title'].toString();
+  }*/
 
   bool validatePrice(String str) {
     RegExp _numeric = RegExp(r'^-?[0-9]+$');

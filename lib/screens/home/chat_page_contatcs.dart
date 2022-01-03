@@ -2,16 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ChatPage extends StatefulWidget {
+class ChatPageFromContatcs extends StatefulWidget {
   final docs; //ID of the user from the stuff
 
-  const ChatPage({Key? key, this.docs}) : super(key: key);
+  const ChatPageFromContatcs({Key? key, this.docs}) : super(key: key);
 
   @override
-  _ChatPageState createState() => _ChatPageState();
+  _ChatPageFromContatcsState createState() => _ChatPageFromContatcsState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageFromContatcsState extends State<ChatPageFromContatcs> {
   String? groupChatId;
   String? userID;
 
@@ -43,7 +43,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.docs['title']),
+        title: Text(widget.docs['name']),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance

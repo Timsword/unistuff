@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
 import 'package:unistuff_main/screens/home/add_stuff_form.dart';
+import 'package:unistuff_main/screens/home/chat_list.dart';
 import 'package:unistuff_main/services/auth.dart';
 import 'package:unistuff_main/services/database.dart';
 import 'package:provider/provider.dart';
@@ -147,7 +148,7 @@ class _HomeState extends State<_Home> {
             )
           ],
         ),
-        body: favorite_list(),
+        body: ChatList(),
       ),
     );
   }

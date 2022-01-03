@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:unistuff_main/screens/home/update_stuff_form.dart';
 import 'package:unistuff_main/screens/home/chat_page.dart';
 
 class favorite_list extends StatelessWidget {
@@ -94,10 +93,6 @@ class favorite_list extends StatelessWidget {
                               backgroundImage: NetworkImage(
                                   snap.data!.docs[index]['stuffImage']),
                             ),
-                            /*leading: SizedBox(
-                    height: 100.0,
-                    width: 100.0, // fixed width and height
-                    child: Image.asset(data['stuffImage'])),*/
                             title: Text(snap.data!.docs[index]['title']),
                             subtitle: Column(
                               children: <Widget>[

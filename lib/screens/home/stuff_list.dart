@@ -14,11 +14,12 @@ class StuffList extends StatelessWidget {
   }
 }
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User? user = auth.currentUser;
+final userID = user!.uid;
+
 class _stuffList extends StatelessWidget {
   favorite(stuffID) async {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User? user = auth.currentUser;
-    final userID = user!.uid;
     Future<bool> checkIfDocExists(String stuffID) async {
       try {
         /// Check If Document Exists
@@ -106,10 +107,15 @@ class _stuffList extends StatelessWidget {
                     TextButton(
                         child: const Text('Mesaj'),
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ChatPage(docs: data)));
+                          if (data['userID'] != userID) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ChatPage(docs: data)));
+                          } else {
+                            //you cant message yourself!
+                          }
                         }),
                     TextButton.icon(
                         icon: Icon(Icons.favorite),

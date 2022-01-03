@@ -1,45 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
+import 'package:unistuff_main/screens/home/update_stuff_form.dart';
 import 'package:unistuff_main/screens/home/chat_page.dart';
 
-class favoriteStuffList extends StatelessWidget {
-  const favoriteStuffList({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _favoriteStuffList(),
-    );
-  }
-}
-
-class _favoriteStuffList extends StatelessWidget {
+class favorite_list extends StatelessWidget {
   favorite(stuffID) async {
-    Future<bool> checkIfDocExists(String docId) async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final userID = user!.uid;
+    Future<bool> checkIfDocExists(String stuffID) async {
       try {
         /// Check If Document Exists
         // Get reference to Firestore collection
-        var collectionRef = FirebaseFirestore.instance.collection('favorites');
+        var collectionRef = FirebaseFirestore.instance
+            .collection('favorites')
+            .doc(userID)
+            .collection(userID);
 
-        var doc = await collectionRef.doc(docId).get();
+        var doc = await collectionRef.doc(stuffID).get();
         return doc.exists;
       } catch (e) {
         throw e;
       }
     }
 
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User? user = auth.currentUser;
-    final userID = user!.uid;
-
-    bool docExists = await checkIfDocExists(userID + "-" + stuffID);
+    bool docExists = await checkIfDocExists(stuffID);
 
     if (docExists == true) {
-      //favorilerden çıkar
+      //eğer zaten favorilemişse favorilerden çıkar
       FirebaseFirestore.instance
           .collection('favorites')
-          .doc(userID + "-" + stuffID)
+          .doc(userID)
+          .collection(userID)
+          .doc(stuffID)
           .delete();
       FirebaseFirestore.instance //delete a favorite from stuff
           .collection('Stuffs')
@@ -47,10 +41,13 @@ class _favoriteStuffList extends StatelessWidget {
           .update({'favoriteNumber': FieldValue.increment(-1)});
     } else {
       //eğer favorilere eklemediyse eklemesini sağla
+      String _dateTime = DateTime.now().toString();
       FirebaseFirestore.instance
           .collection('favorites')
-          .doc(userID + "-" + stuffID)
-          .set({'userID': userID, 'stuffID': stuffID});
+          .doc(userID)
+          .collection(userID)
+          .doc(stuffID)
+          .set({'stuffID': stuffID, 'dateTime': _dateTime});
       FirebaseFirestore.instance //add a favorite to stuff
           .collection('Stuffs')
           .doc(stuffID)
@@ -58,81 +55,79 @@ class _favoriteStuffList extends StatelessWidget {
     }
   }
 
-  List<String> myFavoriteStuffs = [];
-  Future<List<String>> getFavorites() async {
+  @override
+  Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final userID = user!.uid;
-    var result = await FirebaseFirestore.instance
-        .collection('favorites')
-        .where("userID", whereIn: [userID]).get();
-    for (var res in result.docs) {
-      myFavoriteStuffs.add((res.data()['stuffID'] ?? ''));
-    }
-
-    return myFavoriteStuffs;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _stuffStream = FirebaseFirestore.instance
-        .collection('Stuffs') //seçilen döküman
-        .where('stuffID',
-            isEqualTo:
-                getFavorites()) //veriler yeniden eskiye şeklinde listeleniyor
-        .snapshots();
 
     return StreamBuilder<QuerySnapshot>(
-        //veri akışı başlatılıyor
-        //akış oluşturuluyor
-        stream: _stuffStream,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Text('Bir hata oluştu, tekrar deneyiniz.');
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Yükleniyor");
-          }
-
-          return ListView(
-            //veriyi gösterme kısmı
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              return ListTile(
-                /*leading: CircleAvatar(
-                  backgroundImage: AssetImage(
-                      "https://www.kaspersky.com.tr/content/tr-tr/images/smb/icons/icon-ksos.png"), // no matter how big it is, it won't overflow
-                ),*/
-                /*leading: SizedBox(
+      stream: FirebaseFirestore.instance
+          .collection('favorites')
+          .doc(userID)
+          .collection(userID)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const Text("Loadsing...");
+        return Column(children: [
+          ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                //return buildListItem(context, snapshot.data.documents[index]);
+                return ListView(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Stuffs')
+                            .where('stuffID',
+                                isEqualTo: snapshot.data!.docs[index]
+                                    ['stuffID']) //seçilen döküman
+                            .snapshots(),
+                        builder: (context, snap) {
+                          if (!snap.hasData) return const Text("Loading...d");
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  snap.data!.docs[index]['stuffImage']),
+                            ),
+                            /*leading: SizedBox(
                     height: 100.0,
                     width: 100.0, // fixed width and height
                     child: Image.asset(data['stuffImage'])),*/
-                title: Text(data['title']),
-                subtitle: Column(
-                  children: <Widget>[
-                    Text(data['details']),
-                    TextButton(
-                        child: const Text('Mesaj'),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ChatPage(docs: data)));
+                            title: Text(snap.data!.docs[index]['title']),
+                            subtitle: Column(
+                              children: <Widget>[
+                                Text(snap.data!.docs[index]['details']),
+                                TextButton(
+                                    child: const Text('Mesaj'),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => ChatPage(
+                                                  docs:
+                                                      snap.data!.docs[index])));
+                                    }),
+                                TextButton.icon(
+                                    icon: Icon(Icons.favorite),
+                                    label: Text('Favori'),
+                                    onPressed: () async {
+                                      favorite(
+                                          snap.data!.docs[index]['stuffID']);
+                                    }),
+                              ],
+                            ),
+                          );
                         }),
-                    TextButton.icon(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favori'),
-                      onPressed: () async {
-                        favorite(data['stuffID']);
-                      },
-                    ),
                   ],
-                ),
-              );
-            }).toList(),
-          );
-        });
+                );
+              }),
+        ]);
+      },
+    );
   }
 }

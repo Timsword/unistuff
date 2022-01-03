@@ -16,30 +16,34 @@ class StuffList extends StatelessWidget {
 
 class _stuffList extends StatelessWidget {
   favorite(stuffID) async {
-    Future<bool> checkIfDocExists(String docId) async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final userID = user!.uid;
+    Future<bool> checkIfDocExists(String stuffID) async {
       try {
         /// Check If Document Exists
         // Get reference to Firestore collection
-        var collectionRef = FirebaseFirestore.instance.collection('favorites');
+        var collectionRef = FirebaseFirestore.instance
+            .collection('favorites')
+            .doc(userID)
+            .collection(userID);
 
-        var doc = await collectionRef.doc(docId).get();
+        var doc = await collectionRef.doc(stuffID).get();
         return doc.exists;
       } catch (e) {
         throw e;
       }
     }
 
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final User? user = auth.currentUser;
-    final userID = user!.uid;
-
-    bool docExists = await checkIfDocExists(userID + "-" + stuffID);
+    bool docExists = await checkIfDocExists(stuffID);
 
     if (docExists == true) {
-      //favorilerden çıkar
+      //eğer zaten favorilemişse favorilerden çıkar
       FirebaseFirestore.instance
           .collection('favorites')
-          .doc(userID + "-" + stuffID)
+          .doc(userID)
+          .collection(userID)
+          .doc(stuffID)
           .delete();
       FirebaseFirestore.instance //delete a favorite from stuff
           .collection('Stuffs')
@@ -47,10 +51,13 @@ class _stuffList extends StatelessWidget {
           .update({'favoriteNumber': FieldValue.increment(-1)});
     } else {
       //eğer favorilere eklemediyse eklemesini sağla
+      String _dateTime = DateTime.now().toString();
       FirebaseFirestore.instance
           .collection('favorites')
-          .doc(userID + "-" + stuffID)
-          .set({'userID': userID, 'stuffID': stuffID});
+          .doc(userID)
+          .collection(userID)
+          .doc(stuffID)
+          .set({'stuffID': stuffID, 'dateTime': _dateTime});
       FirebaseFirestore.instance //add a favorite to stuff
           .collection('Stuffs')
           .doc(stuffID)

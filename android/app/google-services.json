@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "895186623199",
+    "project_id": "unistuff-c32ad",
+    "storage_bucket": "unistuff-c32ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895186623199:android:88a40a6a72a235fa22e76a",
+        "android_client_info": {
+          "package_name": "com.unistuff.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "895186623199-209m2338pu1dj9iuhl19b2oblak5p2kh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAqCRnxtjlBHhBfE9rrh0v7y7hAETKejI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "895186623199-209m2338pu1dj9iuhl19b2oblak5p2kh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

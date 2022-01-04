@@ -1,16 +1,13 @@
-# myapp
+# unistuff
 
-A new Flutter project.
+A trade center for university students.
 
-## Getting Started
+# installing guide
 
-This project is a starting point for a Flutter application.
+After you downloaded and builded the project in your code editor; 
 
-A few resources to get you started if this is your first Flutter project:
+*go to android>app>src>build.gradle
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+in here, change the minSdkVersion 16 with minSdkVersion 21
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+*internet settings etc.

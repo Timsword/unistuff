@@ -8,7 +8,7 @@ import '../image.dart';
 import 'authenticate/sign_up.dart';
 import 'profile/edit.dart';
 import 'home/menu.dart';
-import 'favorites/favorites.dart';
+import 'favorites/favorites_and_my_stuffs.dart';
 
 class Nav extends StatefulWidget {
   const Nav({Key? key}) : super(key: key);

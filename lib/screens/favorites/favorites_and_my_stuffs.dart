@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_unistaff_project/screens/favorites/update_stuff_form.dart';
 import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,7 @@ class _ShoppingBasket extends State<ShoppingBasket>
   Widget build(BuildContext context) {
     return Scaffold(
       body: DefaultTabController(
-        length: 2,
+        length: 3,
         child: NestedScrollView(
           headerSliverBuilder: (context, value) {
             return [
@@ -57,7 +58,11 @@ class _ShoppingBasket extends State<ShoppingBasket>
                     ),
                     Tab(
                       iconMargin: EdgeInsets.only(top: 5),
-                      text: "Ads",
+                      text: "My stuffs",
+                    ),
+                    Tab(
+                      iconMargin: EdgeInsets.only(top: 5),
+                      text: "My solded stuffs",
                     ),
                   ],
                 ),
@@ -67,7 +72,8 @@ class _ShoppingBasket extends State<ShoppingBasket>
           body: TabBarView(
             children: [
               favorites(context),
-              ads(),
+              MyStuffs(context),
+              MySoldedStuffs(context),
             ],
           ),
         ),
@@ -139,7 +145,7 @@ Widget favorites(BuildContext context) {
         .collection(userID)
         .snapshots(),
     builder: (context, snapshot) {
-      if (!snapshot.hasData) return const Text("Loadsing...");
+      if (!snapshot.hasData) return const CircularProgressIndicator();
       return Column(children: [
         ListView.builder(
             scrollDirection: Axis.vertical,
@@ -159,7 +165,8 @@ Widget favorites(BuildContext context) {
                                   ['stuffID']) //seçilen döküman
                           .snapshots(),
                       builder: (context, snap) {
-                        if (!snap.hasData) return const Text("Loading...d");
+                        if (!snap.hasData)
+                          return const CircularProgressIndicator();
                         return ListTile(
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(
@@ -203,160 +210,177 @@ Widget favorites(BuildContext context) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////    mystuffs     ////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////
-Widget ads() {
-  return ListView(
-    padding: const EdgeInsets.all(8),
-    children: <Widget>[
-      SizedBox(
-        height: 10,
-      ),
-      Card(
-        margin: EdgeInsets.all(10),
-        elevation: 20,
-        color: Colors.white54,
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.lightGreenAccent,
-            child: Icon(
-              Icons.shopping_basket,
-              color: Colors.white54,
-            ),
-            radius: 25,
-          ),
-          title: FlatButton(
-            padding: EdgeInsets.fromLTRB(0, 0, 235, 0),
-            child: const Text(
-              'Product Name',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {},
-          ),
-          subtitle: Text("Ankara"),
-          trailing: Icon(
-            Icons.favorite,
-            color: Colors.red,
-          ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Divider(
-          color: Colors.grey,
-          height: 20,
-        ),
-      ), //aralarına çizgi tanımlamak için
-      //Divider widget'ını tanımlıyoruz
-      Card(
-        margin: EdgeInsets.all(10),
-        elevation: 20,
-        color: Colors.white54,
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.lightGreenAccent,
-            child: Icon(
-              Icons.shopping_basket,
-              color: Colors.white54,
-            ),
-            radius: 25,
-          ),
-          title: FlatButton(
-            padding: EdgeInsets.fromLTRB(0, 0, 235, 0),
-            child: const Text(
-              'Product Name',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {},
-          ),
-          subtitle: Text("Aydın"),
-          trailing: Icon(
-            Icons.favorite,
-            color: Colors.red,
-          ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Divider(
-          color: Colors.grey,
-          height: 20,
-        ),
-      ),
-      Card(
-        margin: EdgeInsets.all(10),
-        elevation: 20,
-        color: Colors.white54,
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.lightGreenAccent,
-            child: Icon(
-              Icons.shopping_basket,
-              color: Colors.white54,
-            ),
-            radius: 25,
-          ),
-          title: FlatButton(
-            padding: EdgeInsets.fromLTRB(0, 0, 235, 0),
-            child: const Text(
-              'Product Name',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {},
-          ),
-          subtitle: Text("Antalya"),
-          trailing: Icon(
-            Icons.favorite,
-            color: Colors.red,
-          ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Divider(
-          color: Colors.grey,
-          height: 20,
-        ),
-      ),
-      Card(
-        margin: EdgeInsets.all(10),
-        elevation: 20,
-        color: Colors.white54,
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.lightGreenAccent,
-            child: Icon(
-              Icons.shopping_basket,
-              color: Colors.white54,
-            ),
-            radius: 25,
-          ),
-          title: FlatButton(
-            padding: EdgeInsets.fromLTRB(0, 0, 235, 0),
-            child: const Text(
-              'Product Name',
-              style: TextStyle(fontSize: 16),
-            ),
-            onPressed: () {},
-          ),
-          subtitle: Text("Trabzon"),
-          trailing: Icon(
-            Icons.favorite,
-            color: Colors.red,
-          ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Divider(
-          color: Colors.grey,
-          height: 20,
-        ),
-      ),
-    ],
+Widget MyStuffs(BuildContext context) {
+  void _editStuff(BuildContext context) {
+    //stuff_form link.
+    showModalBottomSheet<dynamic>(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+              child: updateStuffForm());
+        });
+  }
+
+  deleteStuff(stuffID) {
+    /*final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final _uid = user!.uid;*/
+    FirebaseFirestore.instance.collection('stuffs').doc(stuffID).delete();
+  }
+
+  markAsSold(stuffID) {
+    FirebaseFirestore.instance.collection('stuffs').doc(stuffID).update({
+      'soldOrNot': 'sold',
+    });
+  }
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final User? user = auth.currentUser;
+  final _uid = user!.uid;
+  Query _stuffStream = FirebaseFirestore.instance
+      .collection('stuffs')
+      .where('userID', isEqualTo: _uid)
+      .where('soldOrNot', isEqualTo: 'in sale');
+  return MaterialApp(
+    home: StreamBuilder<QuerySnapshot>(
+        //veri akışı başlatılıyor
+        //akış oluşturuluyor
+        stream: _stuffStream.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something is wrong.');
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+
+          return ListView(
+            //showing the data
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              String stuffID = data['stuffID'];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(data['stuffImage']),
+                ),
+                title: Text(data['title']),
+                subtitle: Column(
+                  children: <Widget>[
+                    Text(data['details']),
+                    TextButton(
+                        child: const Text('Düzenle'),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => updateStuffForm(
+                                      stuffID: data['stuffID'].toString())));
+                          _editStuff(context);
+                        }),
+                    TextButton(
+                        child: const Text('Sil'),
+                        onPressed: () {
+                          deleteStuff(stuffID);
+                        }),
+                    TextButton(
+                        child: const Text('Satıldı olarak işaretle'),
+                        onPressed: () {
+                          markAsSold(stuffID);
+                        })
+                  ],
+                ),
+              );
+            }).toList(),
+          );
+        }),
+  );
+}
+
+Widget MySoldedStuffs(BuildContext context) {
+  void _editStuff(BuildContext context) {
+    //stuff_form link.
+    showModalBottomSheet<dynamic>(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+              child: updateStuffForm());
+        });
+  }
+
+  deleteStuff(stuffID) {
+    /*final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final _uid = user!.uid;*/
+    FirebaseFirestore.instance.collection('stuffs').doc(stuffID).delete();
+  }
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final User? user = auth.currentUser;
+  final _uid = user!.uid;
+  Query _stuffStream = FirebaseFirestore.instance
+      .collection('stuffs')
+      .where('userID', isEqualTo: _uid)
+      .where('soldOrNot', isEqualTo: 'sold');
+  return MaterialApp(
+    home: StreamBuilder<QuerySnapshot>(
+        //veri akışı başlatılıyor
+        //akış oluşturuluyor
+        stream: _stuffStream.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something is wrong.');
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+
+          return ListView(
+            //showing the data
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              String stuffID = data['stuffID'];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(data['stuffImage']),
+                ),
+                title: Text(data['title']),
+                subtitle: Column(
+                  children: <Widget>[
+                    Text(data['details']),
+                    TextButton(
+                        child: const Text('Düzenle'),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => updateStuffForm(
+                                      stuffID: data['stuffID'].toString())));
+                          _editStuff(context);
+                        }),
+                    TextButton(
+                        child: const Text('Sil'),
+                        onPressed: () {
+                          deleteStuff(stuffID);
+                        }),
+                  ],
+                ),
+              );
+            }).toList(),
+          );
+        }),
   );
 }

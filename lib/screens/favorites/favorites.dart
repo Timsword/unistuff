@@ -85,6 +85,7 @@ Widget favorites(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final userID = user!.uid;
+    String a;
     Future<bool> checkIfDocExists(String stuffID) async {
       try {
         /// Check If Document Exists

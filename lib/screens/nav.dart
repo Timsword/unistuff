@@ -1,13 +1,14 @@
+import 'package:first_unistaff_project/screens/add_stuff_form.dart';
 import 'package:first_unistaff_project/screens/messages/chat_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/myuser.dart';
-import 'authenticate/home_screen.dart';
+import 'authenticate/log_in.dart';
 import '../image.dart';
-import 'authenticate/signup.dart';
+import 'authenticate/sign_up.dart';
 import 'profile/edit.dart';
 import 'home/menu.dart';
-import '../shopping_basket.dart';
+import 'favorites/favorites.dart';
 
 class Nav extends StatefulWidget {
   const Nav({Key? key}) : super(key: key);
@@ -30,6 +31,18 @@ class _NavState extends State<Nav> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _addStuff(BuildContext context) {
+    //stuff_form'a yönlendirme.
+    showModalBottomSheet<dynamic>(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+              child: AddStuffForm());
+        });
   }
 
   @override
@@ -68,7 +81,7 @@ class _NavState extends State<Nav> {
                 backgroundColor: Colors.white60,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.add_shopping_cart),
+                icon: Icon(Icons.favorite),
                 title: Text('Shopping'),
                 backgroundColor: Colors.white60,
               ),
@@ -83,7 +96,7 @@ class _NavState extends State<Nav> {
           ),
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add),
-            onPressed: () {},
+            onPressed: () => _addStuff(context),
             backgroundColor: Colors.white54,
           ),
           floatingActionButtonLocation:

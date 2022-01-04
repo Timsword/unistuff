@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:first_unistaff_project/screens/authenticate/home_screen.dart';
+import 'package:first_unistaff_project/screens/authenticate/log_in.dart';
 import 'package:first_unistaff_project/services/auth.dart';
 import 'package:flutter/material.dart';
 

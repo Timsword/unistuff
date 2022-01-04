@@ -120,7 +120,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               buildTextField("Password", "******", true),
               buildTextField("Location", "Trabzon,Turkey", false),
               SizedBox(
-                height: 35,
+                height: 25,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -160,7 +160,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     borderRadius: BorderRadius.circular(20)),
                 child: Text("Logout",
                     style: TextStyle(
-                        fontSize: 14, letterSpacing: 2.2, color: Colors.black)),
+                        fontSize: 14, letterSpacing: 2.2, color: Colors.white)),
                 onPressed: () async {
                   await _auth.signOut();
                 },

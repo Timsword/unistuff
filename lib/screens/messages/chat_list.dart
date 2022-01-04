@@ -1,13 +1,84 @@
-import 'package:first_unistaff_project/screens/messages/chat_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_unistaff_project/screens/messages/chat_from_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:first_unistaff_project/models/myuser.dart';
 
 class ChatList extends StatelessWidget {
-  const ChatList({Key? key}) : super(key: key);
+  //const ChatList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final userID = user!.uid;
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('messages')
+          .where('senderID', isEqualTo: userID)
+          .snapshots(),
+      builder: (context, snapshot) {
+        print(userID);
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text("Yükleniyor");
+        }
+        if (snapshot.hasData) {
+          return Text("data vard");
+        }
+        return Column(children: [
+          ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                print(snapshot.data!.docs[index]['anotherUserID']);
+                //return buildListItem(context, snapshot.data.documents[index]);
+                return ListView(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .where('userID',
+                                isEqualTo: snapshot.data!.docs[index]
+                                    ['anotherUserID'])
+                            .snapshots(),
+                        builder: (context, snap) {
+                          if (!snap.hasData) return const Text("Loading...d");
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  snap.data!.docs[index]['profileImage']),
+                            ),
+                            title: Text(snap.data!.docs[index]['name']),
+                            subtitle: Column(
+                              children: <Widget>[
+                                Text(snap.data!.docs[index]['username']),
+                                Text(snapshot.data!.docs[index]['lastMessage']),
+                                Text(snapshot.data!.docs[index]['timestamp']),
+                                TextButton(
+                                    child: const Text('message'),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChatPageFromContatcs(
+                                                      docs: snap
+                                                          .data!.docs[index])));
+                                    }),
+                              ],
+                            ),
+                          );
+                        }),
+                  ],
+                );
+              }),
+        ]);
+      },
+    );
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -18,15 +89,16 @@ class ChatList extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Message',
+                    'Messages',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
-                  FlatButton(
-                      child: Icon(CupertinoIcons.pencil), onPressed: () {}),
+                  /*FlatButton(//send new message button
+                      child: Icon(CupertinoIcons.pencil), onPressed: () {}),*/
                 ],
               ),
               SizedBox(height: 20),
-              TextField(
+              /*TextFormField(
+                //search person button
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(27.0),
@@ -38,7 +110,9 @@ class ChatList extends StatelessWidget {
                   prefixIcon:
                       Icon(Icons.search, color: Colors.grey[500], size: 25.0),
                 ),
-              ),
+              ),*/
+
+              /*
               MessageWidget(
                   family: 'Zeynep',
                   msg: 'Hello whats up?',
@@ -53,7 +127,7 @@ class ChatList extends StatelessWidget {
               MessageWidget(
                   family: 'Nazli',
                   msg: 'give me back im wating',
-                  time: '58min'),
+                  time: '58min'),*/
             ],
           ),
         ),

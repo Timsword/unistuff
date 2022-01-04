@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../authenticate/home_screen.dart';
+import '../authenticate/log_in.dart';
 import '../../image.dart';
 
 class Menu extends StatefulWidget {
@@ -9,9 +11,65 @@ class Menu extends StatefulWidget {
   State<StatefulWidget> createState() => _MenuState();
 }
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+final User? user = auth.currentUser;
+final userID = user!.uid;
+
 class _MenuState extends State<Menu> {
+  favorite(stuffID) async {
+    Future<bool> checkIfDocExists(String stuffID) async {
+      try {
+        /// Check If Document Exists
+        // Get reference to Firestore collection
+        var collectionRef = FirebaseFirestore.instance
+            .collection('favorites')
+            .doc(userID)
+            .collection(userID);
+
+        var doc = await collectionRef.doc(stuffID).get();
+        return doc.exists;
+      } catch (e) {
+        throw e;
+      }
+    }
+
+    bool docExists = await checkIfDocExists(stuffID);
+
+    if (docExists == true) {
+      //eğer zaten favorilemişse favorilerden çıkar
+      FirebaseFirestore.instance
+          .collection('favorites')
+          .doc(userID)
+          .collection(userID)
+          .doc(stuffID)
+          .delete();
+      FirebaseFirestore.instance //delete a favorite from stuff
+          .collection('Stuffs')
+          .doc(stuffID)
+          .update({'favoriteNumber': FieldValue.increment(-1)});
+    } else {
+      //eğer favorilere eklemediyse eklemesini sağla
+      String _dateTime = DateTime.now().toString();
+      FirebaseFirestore.instance
+          .collection('favorites')
+          .doc(userID)
+          .collection(userID)
+          .doc(stuffID)
+          .set({'stuffID': stuffID, 'dateTime': _dateTime});
+      FirebaseFirestore.instance //add a favorite to stuff
+          .collection('Stuffs')
+          .doc(stuffID)
+          .update({'favoriteNumber': FieldValue.increment(1)});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Stream<QuerySnapshot> _stuffStream = FirebaseFirestore.instance
+        .collection('Stuffs') //seçilen döküman
+        .orderBy('dateTime',
+            descending: true) //veriler yeniden eskiye şeklinde listeleniyor
+        .snapshots();
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -119,14 +177,49 @@ Widget GridContent() {
 }
 
 Widget _ContentGridView() {
-  return GridView.builder(
-      gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemBuilder: (context, index) => Card(
-            child: GridTile(
-              child: Center(
-                child: GridContent(),
-              ),
-            ),
-          ));
+  final Stream<QuerySnapshot> _stuffStream = FirebaseFirestore.instance
+      .collection('stuffs') //seçilen döküman
+      .orderBy('dateTime',
+          descending: true) //veriler yeniden eskiye şeklinde listeleniyor
+      .snapshots();
+  return StreamBuilder<QuerySnapshot>(
+      stream: _stuffStream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Bir hata oluştu, tekrar deneyiniz.');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text("Yükleniyor");
+        }
+        if (!snapshot.hasData) {
+          return Text('error');
+        }
+        if (snapshot.hasData) {
+          return Text('bekle hocam');
+        }
+        if (snapshot.hasData) {
+          return ListView(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              children:
+                  snapshot.data!.docs.map<Widget>((DocumentSnapshot document) {
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                print(data['title']);
+                return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2),
+                    itemBuilder: (context, index) => Card(
+                          child: GridTile(
+                            child: Center(
+                              child: GridContent(),
+                            ),
+                          ),
+                        ));
+              }).toList());
+        } else {
+          return const CircularProgressIndicator();
+        }
+      });
 }

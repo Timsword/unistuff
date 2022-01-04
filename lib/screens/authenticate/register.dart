@@ -33,6 +33,7 @@ class _RegisterState extends State<Register> {
   String name = '';
   String username = '';
   String password = '';
+  String university = '';
   String error = '';
   String usernameError = 'false';
   final AuthService _auth = AuthService();
@@ -41,8 +42,13 @@ class _RegisterState extends State<Register> {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
     final uid = user?.uid;
-    FirebaseFirestore.instance.collection('users').doc(uid).set(
-        {'email': email, 'name': name, 'username': username, 'userID': uid});
+    FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'email': email,
+      'name': name,
+      'username': username,
+      'userID': uid,
+      'university': university
+    });
   }
 
   setUserID() {

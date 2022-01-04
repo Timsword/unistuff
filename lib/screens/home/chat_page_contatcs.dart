@@ -127,7 +127,10 @@ class _ChatPageFromContatcsState extends State<ChatPageFromContatcs> {
         FirebaseFirestore.instance //sets userID's for reference.
             .collection('messages')
             .doc(groupChatId)
-            .set({'senderID': userID, 'anotherUserID': widget.docs['userID']});
+            .update({
+          'lastMessage': msg,
+          'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+        });
       });
 
       scrollController.animateTo(0.0,

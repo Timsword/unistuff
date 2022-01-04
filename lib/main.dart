@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:unistuff_main/screens/wrapper.dart';
 import 'package:provider/provider.dart';
 import 'package:unistuff_main/services/auth.dart';
-import 'package:unistuff_main/models/MyUser.dart';
+import 'package:unistuff_main/models/myuser.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {

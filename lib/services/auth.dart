@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:unistuff_main/models/MyUser.dart';
+import 'package:unistuff_main/models/myuser.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance; //private data member

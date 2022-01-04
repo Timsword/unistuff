@@ -34,7 +34,7 @@ class ChatList extends StatelessWidget {
                             .collection('users')
                             .where('userID',
                                 isEqualTo: snapshot.data!.docs[index]
-                                    ['anotherUserID']) //seçilen döküman
+                                    ['anotherUserID'])
                             .snapshots(),
                         builder: (context, snap) {
                           if (!snap.hasData) return const Text("Loading...d");
@@ -47,8 +47,10 @@ class ChatList extends StatelessWidget {
                             subtitle: Column(
                               children: <Widget>[
                                 Text(snap.data!.docs[index]['username']),
+                                Text(snapshot.data!.docs[index]['lastMessage']),
+                                Text(snapshot.data!.docs[index]['timestamp']),
                                 TextButton(
-                                    child: const Text('Mesaj'),
+                                    child: const Text('message'),
                                     onPressed: () {
                                       Navigator.push(
                                           context,

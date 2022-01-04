@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
-import 'menu.dart';
-import 'edit.dart';
+import 'screens/home/menu.dart';
+import 'screens/profile/edit.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({Key? key}) : super(key: key);
 
-
   @override
   State<StatefulWidget> createState() => _ProductDetail();
-  
 }
 
-class _ProductDetail extends State<ProductDetail>{
-
+class _ProductDetail extends State<ProductDetail> {
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
-        body: CustomScrollView(
-          slivers: [SliverAppBar(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
             expandedHeight: 60,
             floating: true,
             pinned: true,
@@ -29,87 +27,83 @@ class _ProductDetail extends State<ProductDetail>{
               elevation: 40,
               backgroundColor: Colors.white54,
               leading: IconButton(
-                onPressed: (){
+                onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => const Menu()));
-                }, 
+                      builder: (BuildContext context) => const Menu()));
+                },
                 icon: const Icon(Icons.arrow_back_ios_new),
                 color: Colors.white,
+              ),
             ),
           ),
-        ),
-        SliverList(
+          SliverList(
             delegate: SliverChildListDelegate([
-                const SizedBox(
-                  height: 300,
-                  child:  Product(),
-                  ),
-                  Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                  child: Container(
-                    height: 80,
-                    width: 100,
-                    padding: const EdgeInsets.all(0.0),
-                    decoration: BoxDecoration(
+              const SizedBox(
+                height: 300,
+                child: Product(),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                child: Container(
+                  height: 80,
+                  width: 100,
+                  padding: const EdgeInsets.all(0.0),
+                  decoration: BoxDecoration(
                       color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(10.0)
-                    ),
-                    child: Row(
-                       
-                    ),
-                  ),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: Row(),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 200),
-                  child: Container(
-                    height: 100,
-                    width: 100,
-                    padding: const EdgeInsets.all(0.0),
-                    decoration: BoxDecoration(
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 200),
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  padding: const EdgeInsets.all(0.0),
+                  decoration: BoxDecoration(
                       gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Colors.purpleAccent,
-                              Colors.lightGreenAccent,
-                            ]),//colors
-                      borderRadius: BorderRadius.circular(10.0)
-                    ),
-                      child: Row(
-                        children: <Widget>[
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Colors.purpleAccent,
+                            Colors.lightGreenAccent,
+                          ]), //colors
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: Row(
+                    children: <Widget>[
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      CircleAvatar(
+                        backgroundColor: Colors.purple.shade800,
+                        radius: 40,
+                      ),
+                      Column(
+                        children: [
                           const SizedBox(
-                            width: 10,
+                            height: 15,
                           ),
-                          CircleAvatar(
-                             backgroundColor: Colors.purple.shade800,
-                             radius: 40,
-                          ),
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              FlatButton(
-                                textColor: Colors.lightGreenAccent,
-                                child: const Text(
-                                  'User Name',
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (BuildContext context) => SettingsUI()));                //user account
-                              },
+                          FlatButton(
+                            textColor: Colors.lightGreenAccent,
+                            child: const Text(
+                              'User Name',
+                              style: TextStyle(fontSize: 20),
                             ),
-                          ],
-                        )
-                      ],
-                    ),
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      SettingsUI())); //user account
+                            },
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ),
-              ]
-            ),
+              ),
+            ]),
           ),
-        ],   
+        ],
       ),
     );
   }
@@ -133,8 +127,8 @@ class Product extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
             image: const DecorationImage(
-                  image: AssetImage('assets/images/foto.jpeg'),
-                  fit: BoxFit.cover,
+              image: AssetImage('assets/images/foto.jpeg'),
+              fit: BoxFit.cover,
             ),
           ),
         ),

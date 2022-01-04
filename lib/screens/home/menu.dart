@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/authenticate/home_screen.dart';
-import 'image.dart';
+import '../authenticate/home_screen.dart';
+import '../../image.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);

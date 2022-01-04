@@ -4,7 +4,7 @@ import 'package:first_unistaff_project/screens/wrapper.dart';
 import 'package:first_unistaff_project/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'nav.dart';
+import 'screens/nav.dart';
 import 'image.dart';
 
 void main() async {
@@ -18,10 +18,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'UniStuff',
-      home: Nav(),
+      home: StreamProvider<MyUser?>.value(
+        catchError: (User, MyUser) => null,
+        initialData: null,
+        value: AuthService().user,
+        child: MaterialApp(
+          home: Nav(),
+        ),
+      ),
     );
   }
 }

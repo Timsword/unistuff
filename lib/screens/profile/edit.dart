@@ -1,10 +1,11 @@
+import 'package:first_unistaff_project/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'settings.dart';
+import '../../settings.dart';
 
 class EditProfilePageState extends StatefulWidget {
   @override
-   _EditProfilePageState createState() {
+  _EditProfilePageState createState() {
     return _EditProfilePageState();
   }
 }
@@ -22,20 +23,20 @@ class SettingsUI extends StatelessWidget {
 
 class EditProfilePage extends StatefulWidget {
   @override
-  _EditProfilePageState createState() => _EditProfilePageState ();
+  _EditProfilePageState createState() => _EditProfilePageState();
 }
+
 class _EditProfilePageState extends State<EditProfilePage> {
   bool showPassword = false;
 
   get boxshape => null;
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 1,
         leading: IconButton(
           icon: Icon(
@@ -79,10 +80,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       width: 140,
                       height: 140,
                       decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 2,
-                            color: Colors.black
-                        ),
+                        border: Border.all(width: 2, color: Colors.black),
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           fit: BoxFit.cover,
@@ -101,13 +99,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           shape: BoxShape.circle,
                           border: Border.all(
                             width: 2,
-                            color: Theme
-                                .of(context)
-                                .scaffoldBackgroundColor,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                           ),
                           color: Colors.grey,
                         ),
-                        child: Icon(Icons.edit, color: Colors.white,),
+                        child: Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],
@@ -144,7 +143,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     elevation: 1,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
-                    child: Text("Save",
+                    child: Text(
+                      "Save",
                       style: TextStyle(
                           fontSize: 14,
                           letterSpacing: 2.2,
@@ -153,6 +153,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                 ],
               ),
+              RaisedButton(
+                color: Colors.red,
+                padding: EdgeInsets.symmetric(horizontal: 50),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                child: Text("Logout",
+                    style: TextStyle(
+                        fontSize: 14, letterSpacing: 2.2, color: Colors.black)),
+                onPressed: () async {
+                  await _auth.signOut();
+                },
+              ),
             ],
           ),
         ),
@@ -160,8 +172,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Padding buildTextField(String labelText, String placeholder,
-      bool isPasswordTextField) {
+  Padding buildTextField(
+      String labelText, String placeholder, bool isPasswordTextField) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
       child: TextField(
@@ -171,14 +183,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ? IconButton(
                   onPressed: () {
                     setState(() {
-                       showPassword = !showPassword;
+                      showPassword = !showPassword;
                     });
                   },
                   icon: Icon(
                     Icons.remove_red_eye,
                     color: Colors.grey,
                   ),
-                ) : null,
+                )
+              : null,
           contentPadding: EdgeInsets.only(bottom: 3),
           labelText: labelText,
           floatingLabelBehavior: FloatingLabelBehavior.always,

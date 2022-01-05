@@ -96,10 +96,6 @@ class _stuffList extends StatelessWidget {
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(data['stuffImage']),
                 ),
-                /*leading: SizedBox(
-                    height: 100.0,
-                    width: 100.0, // fixed width and height
-                    child: Image.asset(data['stuffImage'])),*/
                 title: Text(data['title']),
                 subtitle: Column(
                   children: <Widget>[

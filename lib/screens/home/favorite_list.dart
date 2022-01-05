@@ -74,7 +74,7 @@ class favorite_list extends StatelessWidget {
               shrinkWrap: true,
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                //return buildListItem(context, snapshot.data.documents[index]);
+                //return buildListItem(context, snapshot.data.documents[index]);ddddddddddddddddddddddddddd
                 return ListView(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,

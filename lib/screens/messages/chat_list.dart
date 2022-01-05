@@ -24,6 +24,17 @@ class ChatList extends StatelessWidget {
           return Text("data yok ustaa");
         }
         return Column(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Messages',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+              /*FlatButton(//send new message button
+                      child: Icon(CupertinoIcons.pencil), onPressed: () {}),*/
+            ],
+          ),
           ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
@@ -50,6 +61,12 @@ class ChatList extends StatelessWidget {
                           print(snap.data!.docs[index]['username']);
                           print(snapshot.data!.docs[index]['lastMessage']);
                           print(snapshot.data!.docs[index]['timestamp']);
+                          return MessageWidget(
+                            image: snap.data!.docs[index]['profileImage'],
+                            family: snap.data!.docs[index]['name'],
+                            msg: (snapshot.data!.docs[index]['lastMessage']),
+                            time: (snapshot.data!.docs[index]['timestamp']),
+                          );
                           return ListTile(
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(
@@ -145,6 +162,7 @@ class MessageWidget extends StatelessWidget {
       required this.family,
       required this.msg,
       required this.time,
+      required this.image,
       this.count = 0})
       : super(key: key);
 
@@ -152,6 +170,7 @@ class MessageWidget extends StatelessWidget {
   final String msg;
   final String time;
   final int count;
+  final String image;
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +204,14 @@ class MessageWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(45),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      CircleAvatar(
+                        radius: 45.0,
+                        backgroundImage: NetworkImage(image),
+                      )
+                    ],
                   ),
                 ),
               ),

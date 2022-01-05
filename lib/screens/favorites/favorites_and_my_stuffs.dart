@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_unistaff_project/product_detail.dart';
 import 'package:first_unistaff_project/screens/favorites/update_stuff_form.dart';
 import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
 import 'package:flutter/material.dart';
@@ -177,74 +178,83 @@ Widget favorites(BuildContext context) {
                               builder: (context, snap) {
                                 if (!snap.hasData)
                                   return const CircularProgressIndicator();
-                                return GridTile(
-                                  child: Text(''),
-                                  footer: Column(children: [
-                                    Container(
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      alignment: Alignment.topCenter,
-                                      child: Container(
+                                return Card(
+                                  child: GridTile(
+                                    child: Text(''),
+                                    footer: Column(children: [
+                                      Container(
                                         height: 100,
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[400],
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                          image: DecorationImage(
-                                            image: NetworkImage(snap.data!
-                                                .docs[index]['stuffImage']),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding:
-                                              EdgeInsets.fromLTRB(10, 0, 20, 0),
-                                          alignment: Alignment.bottomRight,
-                                          child: IconButton(
-                                            iconSize: 20,
-                                            icon: Icon(Icons.favorite),
-                                            onPressed: () {
-                                              favorite(snap.data!.docs[index]
-                                                  ['stuffID']);
-                                            },
-                                          ),
-                                        ),
-                                        Container(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                          alignment: Alignment.bottomLeft,
-                                          child: TextButton(
-                                            onPressed: () {},
-                                            child: TextButton(
-                                              style: TextButton.styleFrom(
-                                                primary: Colors.grey,
-                                                textStyle: const TextStyle(
-                                                    fontSize: 18),
-                                              ),
-                                              onPressed: () {},
-                                              child: Text(snap.data!.docs[index]
-                                                  ['title']),
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        alignment: Alignment.topCenter,
+                                        child: Container(
+                                          height: 100,
+                                          width: 150,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[400],
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                            image: DecorationImage(
+                                              image: NetworkImage(snap.data!
+                                                  .docs[index]['stuffImage']),
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.bottomCenter,
-                                          child: Text(snap.data!.docs[index]
-                                                  ["price"] +
-                                              ' TL'),
-                                        )
-                                      ],
-                                    ),
-                                  ]),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.fromLTRB(
+                                                10, 0, 20, 0),
+                                            alignment: Alignment.bottomRight,
+                                            child: IconButton(
+                                              iconSize: 20,
+                                              icon: Icon(Icons.favorite),
+                                              onPressed: () {
+                                                favorite(snap.data!.docs[index]
+                                                    ['stuffID']);
+                                              },
+                                            ),
+                                          ),
+                                          Container(
+                                            padding:
+                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            alignment: Alignment.bottomLeft,
+                                            child: TextButton(
+                                              onPressed: () {},
+                                              child: TextButton(
+                                                style: TextButton.styleFrom(
+                                                  primary: Colors.grey,
+                                                  textStyle: const TextStyle(
+                                                      fontSize: 18),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ProductDetail()));
+                                                },
+                                                child: Text(snap.data!
+                                                    .docs[index]['title']),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.bottomCenter,
+                                            child: Text(snap.data!.docs[index]
+                                                    ["price"] +
+                                                ' TL'),
+                                          )
+                                        ],
+                                      ),
+                                    ]),
+                                  ),
                                 );
                               }),
                         ],
@@ -361,7 +371,12 @@ Widget MyStuffs(BuildContext context) {
                                 primary: Colors.grey,
                                 textStyle: const TextStyle(fontSize: 18),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProductDetail()));
+                              },
                               child: Text(data['title']),
                             ),
                           ),

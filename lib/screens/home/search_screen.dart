@@ -5,21 +5,21 @@ import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
 import 'package:flutter/material.dart';
 import '../authenticate/log_in.dart';
 import '../../image.dart';
-import 'search_screen.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+class SearchMainPage extends StatefulWidget {
+  final searchString;
+  const SearchMainPage(String searchStringMain, {Key? key, this.searchString})
+      : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _MainPageState();
+  State<StatefulWidget> createState() => _SearchMainPageState();
 }
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final User? user = auth.currentUser;
 final userID = user!.uid;
-String searchStringMain = '';
 
-class _MainPageState extends State<MainPage> {
+class _SearchMainPageState extends State<SearchMainPage> {
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> _stuffStream = FirebaseFirestore.instance
@@ -27,6 +27,7 @@ class _MainPageState extends State<MainPage> {
         .orderBy('dateTime',
             descending: true) //veriler yeniden eskiye şeklinde listeleniyor
         .snapshots();
+    print(widget.searchString);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -47,24 +48,10 @@ class _MainPageState extends State<MainPage> {
                 child: Center(
                   child: TextFormField(
                     cursorColor: Colors.purple.shade800,
-                    onChanged: (val) {
-                      //get the text whenever value changed
-                      setState(() => searchStringMain = val);
-                    },
                     decoration: InputDecoration(
                       fillColor: Colors.purple.shade800,
                       hintText: 'Search for something',
-                      prefixIcon: InkWell(
-                        child: Icon(Icons.search),
-                        onTap: () {
-                          print(searchStringMain);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      SearchMainPage(searchStringMain)));
-                        },
-                      ),
+                      prefixIcon: Icon(Icons.search),
                     ),
                   ),
                 ),
@@ -76,7 +63,7 @@ class _MainPageState extends State<MainPage> {
               Container(
                 height: 400,
                 child: Center(
-                  child: _ContentGridView(),
+                  child: _SearchContentGridView(widget.searchString),
                 ),
               ),
             ]),
@@ -147,7 +134,7 @@ class _MainPageState extends State<MainPage> {
   ]);
 }*/
 
-Widget _ContentGridView() {
+Widget _SearchContentGridView(String searchString) {
   favorite(stuffID) async {
     Future<bool> checkIfDocExists(String stuffID) async {
       try {
@@ -197,8 +184,10 @@ Widget _ContentGridView() {
 
   final Stream<QuerySnapshot> _stuffStream = FirebaseFirestore.instance
       .collection('stuffs') //seçilen döküman
-      .orderBy('dateTime',
-          descending: true) //veriler yeniden eskiye şeklinde listeleniyor
+      .where("title", isGreaterThanOrEqualTo: searchString)
+      .where("title",
+          isLessThanOrEqualTo: searchString +
+              "\uf7ff") //veriler yeniden eskiye şeklinde listeleniyor
       .snapshots();
   return StreamBuilder<QuerySnapshot>(
       //veri akışı başlatılıyor
@@ -285,7 +274,7 @@ Widget _ContentGridView() {
                       )
                     ],
                   ),
-                  /*Column(
+                  Column(
                     children: [
                       TextButton(
                           child: const Text('Mesaj'),
@@ -301,7 +290,7 @@ Widget _ContentGridView() {
                             }
                           }),
                     ],
-                  ),*/
+                  ),
                 ]),
               ),
             );

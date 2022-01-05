@@ -29,7 +29,7 @@ class _ProductDetail extends State<ProductDetail> {
               leading: IconButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => const Menu()));
+                      builder: (BuildContext context) => const MainPage()));
                 },
                 icon: const Icon(Icons.arrow_back_ios_new),
                 color: Colors.white,

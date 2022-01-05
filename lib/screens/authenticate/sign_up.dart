@@ -25,6 +25,7 @@ class _SignUpState extends State<SignUp> {
   String name = '';
   String username = '';
   String password = '';
+  String location = '';
   String university = '';
   String error = '';
   String usernameError = 'false';
@@ -39,7 +40,8 @@ class _SignUpState extends State<SignUp> {
       'name': name,
       'username': username,
       'userID': uid,
-      'university': university
+      'university': university,
+      'location': location
     });
   }
 
@@ -109,7 +111,7 @@ class _SignUpState extends State<SignUp> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (val) => //boşsa uyarı
-                    val!.isEmpty ? 'Lütfen bir isim giriniz' : null,
+                    val!.isEmpty ? 'Please insert a name' : null,
                 onChanged: (val) {
                   //get the text whenever value changed
                   setState(() => name = val);
@@ -120,11 +122,11 @@ class _SignUpState extends State<SignUp> {
             TextFormField(
                 controller: nicknameController,
                 decoration: const InputDecoration(
-                  labelText: 'Nick Name',
+                  labelText: 'Nickname',
                   border: OutlineInputBorder(),
                 ),
                 validator: (val) => //boşsa uyarı
-                    val!.isEmpty ? 'Lütfen bir kullanıcı adı giriniz' : null,
+                    val!.isEmpty ? 'Please insert a nickname' : null,
                 onChanged: (val) {
                   //get the text whenever value changed
                   setState(() => username = val);
@@ -215,6 +217,21 @@ class _SignUpState extends State<SignUp> {
                 onChanged: (val) {
                   //get the text whenever value changed
                   setState(() => university = val);
+                }),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (val) => //boşsa uyarı
+                    val!.isEmpty ? 'Lütfen bir isim giriniz' : null,
+                onChanged: (val) {
+                  //get the text whenever value changed
+                  setState(() => name = val);
                 }),
             const SizedBox(
               height: 10,

@@ -7,6 +7,7 @@ import 'authenticate/log_in.dart';
 import '../image.dart';
 import 'authenticate/sign_up.dart';
 import 'profile/edit.dart';
+import 'profile/profile.dart';
 import 'home/menu.dart';
 import 'favorites/favorites_and_my_stuffs.dart';
 
@@ -21,10 +22,10 @@ class _NavState extends State<Nav> {
   int _selectedIndex = 0;
   final _icerikler = [
     //Kategori(kategori: ,),
-    Menu(),
+    MainPage(),
     ChatList(),
     ShoppingBasket(),
-    EditProfilePage(),
+    ProfilePage(),
   ];
 
   void _onItemTap(int index) {
@@ -63,7 +64,7 @@ class _NavState extends State<Nav> {
         home: Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: const Text('UniStaff'),
+            title: const Text('UniStuff'),
           ),
           body: Center(
             child: _icerikler[_selectedIndex],

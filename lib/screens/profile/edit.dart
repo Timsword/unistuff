@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_unistaff_project/screens/home/menu.dart';
 import 'package:first_unistaff_project/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,8 +35,45 @@ class _EditProfilePageState extends State<EditProfilePage> {
   get boxshape => null;
   final AuthService _auth = AuthService();
 
+  var getName = '';
+  var getImage = '';
+  var getEmail = '';
+  var getLocation = '';
+  var getUniversity = '';
+  String name = '';
+  String location = '';
+  String university = '';
+
+  updateUserInfo() {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final _uid = user!.uid;
+    FirebaseFirestore.instance.collection('users').doc(userID).update({
+      'name': name,
+      'location': location,
+      'university': university,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final userID = user!.uid;
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userID)
+        .get()
+        .then((gelenVeri) {
+      setState(() {
+        getName = gelenVeri.data()!['name'];
+        getImage = gelenVeri.data()!['profileImage'];
+        getEmail = gelenVeri.data()!['email'];
+        getUniversity = gelenVeri.data()!['university'];
+        getLocation = gelenVeri.data()!['location'];
+      });
+    });
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -84,8 +124,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: NetworkImage(
-                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs5Azv8erp-FKyJyj0Bs-pfviq0UlMXiWKcg&usqp=CAU'),
+                          image: NetworkImage(getImage),
                         ),
                       ),
                     ),
@@ -115,55 +154,69 @@ class _EditProfilePageState extends State<EditProfilePage> {
               SizedBox(
                 height: 35,
               ),
-              buildTextField("Full Name", "Mary Louis", false),
-              buildTextField("E-mail", "MaryLouis@gmail.com", false),
-              buildTextField("Password", "******", true),
-              buildTextField("Location", "Trabzon,Turkey", false),
+              Text('Full Name'),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: getName,
+                  border: OutlineInputBorder(),
+                ),
+                validator: (val) {
+                  val!.isEmpty ? null : setState(() => name = val);
+                },
+              ),
+              Text('Location'),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: getLocation,
+                  border: OutlineInputBorder(),
+                ),
+                validator: (val) {
+                  val!.isEmpty
+                      ? setState(() => location = getLocation)
+                      : setState(() => location = val);
+                },
+              ),
+              Text('University'),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: getUniversity,
+                  border: OutlineInputBorder(),
+                ),
+                validator: (val) {
+                  val!.isEmpty
+                      ? setState(() => university = getUniversity)
+                      : setState(() => university = val);
+                },
+              ),
               SizedBox(
                 height: 25,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  RaisedButton(
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    onPressed: () {},
-                    child: Text("Cancel",
-                        style: TextStyle(
-                            fontSize: 14,
-                            letterSpacing: 2.2,
-                            color: Colors.black)),
-                  ),
-                  RaisedButton(
-                    onPressed: () {},
-                    color: Colors.green,
-                    padding: EdgeInsets.symmetric(horizontal: 50),
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Text(
-                      "Save",
-                      style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2.2,
-                          color: Colors.white),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RaisedButton(
+                        onPressed: () {
+                          updateUserInfo();
+                        },
+                        color: Colors.green,
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Text(
+                          "Save",
+                          style: TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 2.2,
+                              color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-              RaisedButton(
-                color: Colors.red,
-                padding: EdgeInsets.symmetric(horizontal: 50),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                child: Text("Logout",
-                    style: TextStyle(
-                        fontSize: 14, letterSpacing: 2.2, color: Colors.white)),
-                onPressed: () async {
-                  await _auth.signOut();
-                },
               ),
             ],
           ),

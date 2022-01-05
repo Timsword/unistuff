@@ -128,7 +128,7 @@ class _ChatPageState extends State<ChatPage> {
             .collection('messages')
             .doc(groupChatId)
             .set({
-          'chatUsersID': userID,
+          'senderID': userID,
           'anotherUserID': widget.docs['userID'],
           'lastMessage': msg,
           'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),

@@ -145,7 +145,7 @@ Widget favorites(BuildContext context) {
         .collection(userID)
         .snapshots(),
     builder: (context, snapshot) {
-      if (!snapshot.hasData) return const CircularProgressIndicator();
+      if (!snapshot.hasData) return const Text("Loadsing...");
       return Column(children: [
         ListView.builder(
             scrollDirection: Axis.vertical,
@@ -155,7 +155,6 @@ Widget favorites(BuildContext context) {
               return ListView(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                padding: const EdgeInsets.all(8),
                 children: <Widget>[
                   StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
@@ -165,6 +164,7 @@ Widget favorites(BuildContext context) {
                                   ['stuffID']) //seçilen döküman
                           .snapshots(),
                       builder: (context, snap) {
+                        print(snap.data!.docs[index]['stuffImage']);
                         if (!snap.hasData)
                           return const CircularProgressIndicator();
                         return ListTile(

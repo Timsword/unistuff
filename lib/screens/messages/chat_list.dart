@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:first_unistaff_project/models/myuser.dart';
 
 class ChatList extends StatelessWidget {
-  //const ChatList({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -19,12 +17,11 @@ class ChatList extends StatelessWidget {
           .where('senderID', isEqualTo: userID)
           .snapshots(),
       builder: (context, snapshot) {
-        print(userID);
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Yükleniyor");
+          return const CircularProgressIndicator();
         }
-        if (snapshot.hasData) {
-          return Text("data vard");
+        if (!snapshot.hasData) {
+          return Text("data yok ustaa");
         }
         return Column(children: [
           ListView.builder(
@@ -32,6 +29,7 @@ class ChatList extends StatelessWidget {
               shrinkWrap: true,
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
+                print('another user id:');
                 print(snapshot.data!.docs[index]['anotherUserID']);
                 //return buildListItem(context, snapshot.data.documents[index]);
                 return ListView(
@@ -47,6 +45,11 @@ class ChatList extends StatelessWidget {
                             .snapshots(),
                         builder: (context, snap) {
                           if (!snap.hasData) return const Text("Loading...d");
+                          print(snap.data!.docs[index]['profileImage']);
+                          print(snap.data!.docs[index]['name']);
+                          print(snap.data!.docs[index]['username']);
+                          print(snapshot.data!.docs[index]['lastMessage']);
+                          print(snapshot.data!.docs[index]['timestamp']);
                           return ListTile(
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(

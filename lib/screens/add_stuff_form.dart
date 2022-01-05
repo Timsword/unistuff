@@ -42,6 +42,16 @@ class _AddStuffFormState extends State<AddStuffForm> {
   String? downloadLink;
   Future pickStuffImage() async {
     var fileToUpload =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (image == null) print("null don");
+    setState(() {
+      image = File(fileToUpload!.path);
+    });
+    return image;
+  }
+
+  Future getStuffImage() async {
+    var fileToUpload =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) print("null don");
     setState(() {
@@ -150,7 +160,7 @@ class _AddStuffFormState extends State<AddStuffForm> {
               icon: Icon(Icons.image),
               label: Text('Gallery'),
               onPressed: () {
-                Future<dynamic> image = (pickStuffImage());
+                Future<dynamic> image = (getStuffImage());
               },
             ),
             TextButton.icon(

@@ -145,16 +145,22 @@ Widget favorites(BuildContext context) {
         .collection(userID)
         .snapshots(),
     builder: (context, snapshot) {
-      if (!snapshot.hasData) return const Text("Loadsing...");
+      if (!snapshot.hasData) return const CircularProgressIndicator();
       return Column(children: [
         ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             itemCount: snapshot.data!.docs.length,
+            padding: const EdgeInsets.all(8),
             itemBuilder: (context, index) {
-              return ListView(
+              return GridView(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 9 / 10,
+                  crossAxisCount: 1,
+                ),
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
+                padding: const EdgeInsets.all(8),
                 children: <Widget>[
                   StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
@@ -164,39 +170,72 @@ Widget favorites(BuildContext context) {
                                   ['stuffID']) //seçilen döküman
                           .snapshots(),
                       builder: (context, snap) {
-                        print(snap.data!.docs[index]['stuffImage']);
                         if (!snap.hasData)
                           return const CircularProgressIndicator();
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                snap.data!.docs[index]['stuffImage']),
-                          ),
-                          title: Text(snap.data!.docs[index]['title']),
-                          subtitle: Column(
-                            children: <Widget>[
-                              Text(snap.data!.docs[index]['details']),
-                              TextButton(
-                                  child: const Text('Mesaj'),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ChatPage(
-                                                docs: snap.data!.docs[index])));
-                                  }),
-                              TextButton.icon(
-                                  icon: Icon(Icons.favorite),
-                                  label: Text('Favori'),
-                                  onPressed: () async {
-                                    favorite(snap.data!.docs[index]['stuffID']);
-                                  }),
-                            ],
-                          ),
-
-                          /*SizedBox(
-                    height: 10,
-                  ),*/
+                        return GridTile(
+                          child: Text(''),
+                          footer: Column(children: [
+                            Container(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 25),
+                              alignment: Alignment.topCenter,
+                              child: Container(
+                                height: 150,
+                                width: 200,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[400],
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        snap.data!.docs[index]['stuffImage']),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                                  alignment: Alignment.bottomRight,
+                                  child: IconButton(
+                                    iconSize: 20,
+                                    icon: Icon(Icons.favorite),
+                                    onPressed: () {
+                                      favorite(
+                                          snap.data!.docs[index]['stuffID']);
+                                    },
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                                  alignment: Alignment.bottomLeft,
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    onLongPress: () {},
+                                    child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        primary: Colors.grey,
+                                        textStyle:
+                                            const TextStyle(fontSize: 18),
+                                      ),
+                                      onPressed: () {},
+                                      child:
+                                          Text(snap.data!.docs[index]['title']),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Container(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Text(
+                                      snap.data!.docs[index]["price"] + ' TL'),
+                                )
+                              ],
+                            ),
+                          ]),
                         );
                       }),
                 ],
@@ -263,42 +302,63 @@ Widget MyStuffs(BuildContext context) {
             return const CircularProgressIndicator();
           }
 
-          return ListView(
-            //showing the data
+          return GridView(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              childAspectRatio: 9 / 10,
+              crossAxisCount: 1,
+            ),
+            //veriyi gösterme kısmı
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
-              String stuffID = data['stuffID'];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(data['stuffImage']),
-                ),
-                title: Text(data['title']),
-                subtitle: Column(
-                  children: <Widget>[
-                    Text(data['details']),
-                    TextButton(
-                        child: const Text('Düzenle'),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => updateStuffForm(
-                                      stuffID: data['stuffID'].toString())));
-                          _editStuff(context);
-                        }),
-                    TextButton(
-                        child: const Text('Sil'),
-                        onPressed: () {
-                          deleteStuff(stuffID);
-                        }),
-                    TextButton(
-                        child: const Text('Satıldı olarak işaretle'),
-                        onPressed: () {
-                          markAsSold(stuffID);
-                        })
-                  ],
-                ),
+              return GridTile(
+                child: Text(''),
+                footer: Column(children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 25),
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      height: 150,
+                      width: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(20.0),
+                        image: DecorationImage(
+                          image: NetworkImage(data['stuffImage']),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                        alignment: Alignment.bottomLeft,
+                        child: TextButton(
+                          onPressed: () {},
+                          onLongPress: () {},
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              primary: Colors.grey,
+                              textStyle: const TextStyle(fontSize: 18),
+                            ),
+                            onPressed: () {},
+                            child: Text(data['title']),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Text(data["price"] + ' TL'),
+                      )
+                    ],
+                  ),
+                ]),
               );
             }).toList(),
           );
@@ -347,37 +407,63 @@ Widget MySoldedStuffs(BuildContext context) {
             return const CircularProgressIndicator();
           }
 
-          return ListView(
-            //showing the data
+          return GridView(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              childAspectRatio: 9 / 10,
+              crossAxisCount: 1,
+            ),
+            //veriyi gösterme kısmı
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
-              String stuffID = data['stuffID'];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(data['stuffImage']),
-                ),
-                title: Text(data['title']),
-                subtitle: Column(
-                  children: <Widget>[
-                    Text(data['details']),
-                    TextButton(
-                        child: const Text('Düzenle'),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => updateStuffForm(
-                                      stuffID: data['stuffID'].toString())));
-                          _editStuff(context);
-                        }),
-                    TextButton(
-                        child: const Text('Sil'),
-                        onPressed: () {
-                          deleteStuff(stuffID);
-                        }),
-                  ],
-                ),
+              return GridTile(
+                child: Text(''),
+                footer: Column(children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 25),
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      height: 150,
+                      width: 200,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(20.0),
+                        image: DecorationImage(
+                          image: NetworkImage(data['stuffImage']),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                        alignment: Alignment.bottomLeft,
+                        child: TextButton(
+                          onPressed: () {},
+                          onLongPress: () {},
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              primary: Colors.grey,
+                              textStyle: const TextStyle(fontSize: 18),
+                            ),
+                            onPressed: () {},
+                            child: Text(data['title']),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Text(data["price"] + ' TL'),
+                      )
+                    ],
+                  ),
+                ]),
               );
             }).toList(),
           );

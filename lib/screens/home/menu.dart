@@ -159,7 +159,7 @@ Widget _ContentGridView() {
           .doc(stuffID)
           .delete();
       FirebaseFirestore.instance //delete a favorite from stuff
-          .collection('Stuffs')
+          .collection('stuffs')
           .doc(stuffID)
           .update({'favoriteNumber': FieldValue.increment(-1)});
     } else {
@@ -172,7 +172,7 @@ Widget _ContentGridView() {
           .doc(stuffID)
           .set({'stuffID': stuffID, 'dateTime': _dateTime});
       FirebaseFirestore.instance //add a favorite to stuff
-          .collection('Stuffs')
+          .collection('stuffs')
           .doc(stuffID)
           .update({'favoriteNumber': FieldValue.increment(1)});
     }

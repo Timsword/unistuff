@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:first_unistaff_project/product_detail.dart';
+import 'product_detail.dart';
 import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
 import 'package:flutter/material.dart';
 import '../authenticate/log_in.dart';

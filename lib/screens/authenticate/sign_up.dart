@@ -19,6 +19,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController emailController = TextEditingController();
   TextEditingController nicknameController = TextEditingController();
   TextEditingController universityController = TextEditingController();
+  TextEditingController locatinController = TextEditingController();
 
   //text field states
   String email = '';
@@ -222,16 +223,16 @@ class _SignUpState extends State<SignUp> {
               height: 10,
             ),
             TextFormField(
-                controller: nameController,
+                controller: locatinController,
                 decoration: const InputDecoration(
-                  labelText: 'Name',
+                  labelText: 'City',
                   border: OutlineInputBorder(),
                 ),
                 validator: (val) => //boşsa uyarı
                     val!.isEmpty ? 'Lütfen bir isim giriniz' : null,
                 onChanged: (val) {
                   //get the text whenever value changed
-                  setState(() => name = val);
+                  setState(() => location = val);
                 }),
             const SizedBox(
               height: 10,

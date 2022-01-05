@@ -102,19 +102,23 @@ class _AddStuffFormState extends State<AddStuffForm> {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController titleController = TextEditingController();
+    TextEditingController detailController = TextEditingController();
+    TextEditingController priceController = TextEditingController();
     return Form(
       key: _formkey,
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Text(
-              'Add your stuff info',
-              style: TextStyle(fontSize: 18.0),
-            ),
+            Text('Please enter your product information.',
+                style: Theme.of(context).textTheme.bodyText1),
             SizedBox(height: 20.0),
             TextFormField(
-              decoration: InputDecoration(
-                  fillColor: Colors.brown, hintText: 'Title', filled: true),
+              controller: titleController,
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(),
+              ),
               validator: (val) {
                 if ((validatePrice(val!) == false)) {
                   return "Lütfen bir sayı giriniz";
@@ -131,16 +135,22 @@ class _AddStuffFormState extends State<AddStuffForm> {
               keyboardType: TextInputType.multiline,
               minLines: 1, //Normal textInputField will be displayed
               maxLines: 5,
-              decoration: InputDecoration(
-                  fillColor: Colors.brown, hintText: 'Details', filled: true),
+              controller: detailController,
+              decoration: const InputDecoration(
+                labelText: 'Details',
+                border: OutlineInputBorder(),
+              ),
               validator: (val) =>
                   val!.isEmpty ? 'Lütfen bir açıklama giriniz' : null,
               onChanged: (val) => setState(() => _currentDetails = val),
             ),
             SizedBox(height: 20.0),
             TextFormField(
-              decoration: InputDecoration(
-                  fillColor: Colors.brown, hintText: 'Price', filled: true),
+              controller: priceController,
+              decoration: const InputDecoration(
+                labelText: 'Price',
+                border: OutlineInputBorder(),
+              ),
               validator: (val) =>
                   val!.isEmpty ? 'Lütfen bir fiyat giriniz' : null,
               onChanged: (val) => setState(() => _currentPrice = val),
@@ -156,26 +166,36 @@ class _AddStuffFormState extends State<AddStuffForm> {
               onChanged: (val) =>
                   setState(() => _currentCategory = val as String?),
             ),
-            TextButton.icon(
-              icon: Icon(Icons.image),
-              label: Text('Gallery'),
-              onPressed: () {
-                Future<dynamic> image = (getStuffImage());
-              },
-            ),
-            TextButton.icon(
-              icon: Icon(Icons.camera_alt),
-              label: Text('Camera'),
-              onPressed: () {
-                Future<dynamic> image = (pickStuffImage());
-              },
-            ),
-            FlatButton(
-              textColor: Colors.lightGreenAccent,
-              child: const Text(
-                'Add',
-                style: TextStyle(fontSize: 20),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              TextButton.icon(
+                icon: Icon(Icons.image, size: 30),
+                label: Text('Gallery'),
+                onPressed: () {
+                  Future<dynamic> image = (getStuffImage());
+                },
               ),
+              SizedBox(
+                width: 50,
+              ),
+              TextButton.icon(
+                icon: Icon(Icons.camera_alt, size: 30),
+                label: Text('Camera'),
+                onPressed: () {
+                  Future<dynamic> image = (pickStuffImage());
+                },
+              ),
+            ]),
+            SizedBox(
+              height: 50,
+            ),
+            ElevatedButton(
+              child: const Text('Add'),
+              style: ElevatedButton.styleFrom(
+                  primary: Colors.purple.shade800,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  textStyle: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
               onPressed: () async {
                 addStuffImageToDatabase(addStuff(), image);
               },

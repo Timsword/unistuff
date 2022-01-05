@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
 import 'package:first_unistaff_project/screens/messages/chat_from_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,12 +62,7 @@ class ChatList extends StatelessWidget {
                           print(snap.data!.docs[index]['username']);
                           print(snapshot.data!.docs[index]['lastMessage']);
                           print(snapshot.data!.docs[index]['timestamp']);
-                          return MessageWidget(
-                            image: snap.data!.docs[index]['profileImage'],
-                            family: snap.data!.docs[index]['name'],
-                            msg: (snapshot.data!.docs[index]['lastMessage']),
-                            time: (snapshot.data!.docs[index]['timestamp']),
-                          );
+
                           return ListTile(
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(
@@ -77,7 +73,6 @@ class ChatList extends StatelessWidget {
                               children: <Widget>[
                                 Text(snap.data!.docs[index]['username']),
                                 Text(snapshot.data!.docs[index]['lastMessage']),
-                                Text(snapshot.data!.docs[index]['timestamp']),
                                 TextButton(
                                     child: const Text('message'),
                                     onPressed: () {
@@ -156,13 +151,15 @@ class ChatList extends StatelessWidget {
   }
 }
 
-class MessageWidget extends StatelessWidget {
+class MessageWidget extends StatefulWidget {
+  final data;
   const MessageWidget(
       {Key? key,
       required this.family,
       required this.msg,
       required this.time,
       required this.image,
+      required this.data,
       this.count = 0})
       : super(key: key);
 
@@ -173,15 +170,18 @@ class MessageWidget extends StatelessWidget {
   final String image;
 
   @override
+  State<MessageWidget> createState() => _MessageWidgetState();
+}
+
+class _MessageWidgetState extends State<MessageWidget> {
+  @override
   Widget build(BuildContext context) {
     var chat;
     return GestureDetector(
-      /*onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ChatPage(docs: data));
-      ),*/
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChatPageFromContatcs(docs: widget.data))),
       child: Row(
         children: [
           Container(
@@ -209,7 +209,7 @@ class MessageWidget extends StatelessWidget {
                     children: <Widget>[
                       CircleAvatar(
                         radius: 45.0,
-                        backgroundImage: NetworkImage(image),
+                        backgroundImage: NetworkImage(widget.image),
                       )
                     ],
                   ),
@@ -223,12 +223,12 @@ class MessageWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$family',
+                  '${widget.family}',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
                 Text(
-                  '$msg',
+                  '${widget.msg}',
                   style: TextStyle(
                       fontSize: 13, color: Colors.grey.shade700, height: 1.5),
                 ),
@@ -238,19 +238,21 @@ class MessageWidget extends StatelessWidget {
           Column(
             children: [
               Text(
-                '$time',
+                '${widget.time}',
                 style: TextStyle(
                     fontSize: 12,
-                    color: count == 0 ? Colors.grey.shade500 : Colors.green),
+                    color: widget.count == 0
+                        ? Colors.grey.shade500
+                        : Colors.green),
               ),
               SizedBox(height: 10),
-              this.count == 0
+              this.widget.count == 0
                   ? Container()
                   : CircleAvatar(
                       radius: 11,
                       backgroundColor: Colors.green.shade600,
                       child: Text(
-                        '$count',
+                        '${widget.count}',
                         style: TextStyle(color: Colors.white),
                       ),
                     )

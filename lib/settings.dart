@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:first_unistaff_project/services/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -10,6 +13,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final AuthService _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,12 +99,15 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             Center(
               child: OutlinedButton(
-                  onPressed: () {},
-                  child: Text(
-                    "SIGN OUT",
-                    style: TextStyle(
-                        fontSize: 16, letterSpacing: 2.2, color: Colors.black),
-                  )),
+                child: Text(
+                  "SIGN OUT",
+                  style: TextStyle(
+                      fontSize: 16, letterSpacing: 2.2, color: Colors.black),
+                ),
+                onPressed: () async {
+                  await _auth.signOut();
+                },
+              ),
             ),
           ],
         ),

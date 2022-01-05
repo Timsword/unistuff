@@ -171,9 +171,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (val) {
-                  val!.isEmpty
-                      ? setState(() => location = getLocation)
-                      : setState(() => location = val);
+                  val!.isEmpty ? null : setState(() => location = val);
                 },
               ),
               Text('University'),

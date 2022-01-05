@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_unistaff_project/product_detail.dart';
 import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
 import 'package:flutter/material.dart';
 import '../authenticate/log_in.dart';
@@ -70,7 +71,7 @@ class _MenuState extends State<Menu> {
   }
 }
 
-Widget GridContent() {
+/*Widget GridContent() {
   TextEditingController nameController = TextEditingController();
   String productName;
   return ListView(children: [
@@ -128,7 +129,7 @@ Widget GridContent() {
       ],
     ),
   ]);
-}
+}*/
 
 Widget _ContentGridView() {
   favorite(stuffID) async {
@@ -197,7 +198,8 @@ Widget _ContentGridView() {
         }
 
         return GridView(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          ////////////////////////////////////////////////////////////////////////////////////
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             childAspectRatio: 9 / 10,
             crossAxisCount: 2,
           ),
@@ -205,65 +207,70 @@ Widget _ContentGridView() {
           children: snapshot.data!.docs.map((DocumentSnapshot document) {
             Map<String, dynamic> data =
                 document.data()! as Map<String, dynamic>;
-            return GridTile(
-              child: Text(''),
-              footer: Column(children: [
-                Container(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 25),
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    height: 150,
-                    width: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(20.0),
-                      image: DecorationImage(
-                        image: NetworkImage(data['stuffImage']),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                      alignment: Alignment.bottomRight,
-                      child: IconButton(
-                        iconSize: 20,
-                        icon: Icon(Icons.favorite),
-                        onPressed: () {
-                          favorite(data['stuffID']);
-                        },
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
-                      alignment: Alignment.bottomLeft,
-                      child: TextButton(
-                        onPressed: () {},
-                        onLongPress: () {},
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            primary: Colors.grey,
-                            textStyle: const TextStyle(fontSize: 18),
-                          ),
-                          onPressed: () {},
-                          child: Text(data['title']),
+            return Card(
+              child: GridTile(
+                child: Column(children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      height: 100,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(20.0),
+                        image: DecorationImage(
+                          image: NetworkImage(data['stuffImage']),
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      alignment: Alignment.bottomCenter,
-                      child: Text(data["price"] + ' TL'),
-                    )
-                  ],
-                ),
-              ]),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.fromLTRB(10, 0, 20, 0),
+                        alignment: Alignment.bottomRight,
+                        child: IconButton(
+                          iconSize: 20,
+                          icon: Icon(Icons.favorite),
+                          onPressed: () {
+                            favorite(data['stuffID']);
+                          },
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        alignment: Alignment.bottomLeft,
+                        child: TextButton(
+                          onPressed: () {},
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              primary: Colors.grey,
+                              textStyle: const TextStyle(fontSize: 18),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProductDetail()));
+                            },
+                            child: Text(data['title']),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Text(data['price'] + ' TL'),
+                      )
+                    ],
+                  ),
+                ]),
+              ),
             );
           }).toList(),
         );

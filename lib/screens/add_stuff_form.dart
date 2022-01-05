@@ -170,11 +170,12 @@ class _AddStuffFormState extends State<AddStuffForm> {
                 Future<dynamic> image = (pickStuffImage());
               },
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.pink[400],
+            FlatButton(
+              textColor: Colors.lightGreenAccent,
+              child: const Text(
+                'Add',
+                style: TextStyle(fontSize: 20),
               ),
-              child: Text('Ekle', style: TextStyle(color: Colors.white)),
               onPressed: () async {
                 addStuffImageToDatabase(addStuff(), image);
               },

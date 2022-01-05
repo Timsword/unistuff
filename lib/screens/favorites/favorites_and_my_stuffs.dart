@@ -41,7 +41,7 @@ class _ShoppingBasket extends State<ShoppingBasket>
                 snap: false,
                 stretch: true,
                 centerTitle: false,
-                backgroundColor: Colors.lightBlue.shade800,
+                backgroundColor: Colors.purple.shade800,
                 bottom: const TabBar(
                   indicatorColor: Colors.lightGreenAccent,
                   indicator: UnderlineTabIndicator(
@@ -138,111 +138,122 @@ Widget favorites(BuildContext context) {
     }
   }
 
-  return StreamBuilder<QuerySnapshot>(
-    stream: FirebaseFirestore.instance
-        .collection('favorites')
-        .doc(userID)
-        .collection(userID)
-        .snapshots(),
-    builder: (context, snapshot) {
-      if (!snapshot.hasData) return const CircularProgressIndicator();
-      return Column(children: [
-        ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: snapshot.data!.docs.length,
-            padding: const EdgeInsets.all(8),
-            itemBuilder: (context, index) {
-              return GridView(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 9 / 10,
-                  crossAxisCount: 1,
-                ),
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(8),
-                children: <Widget>[
-                  StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('stuffs')
-                          .where('stuffID',
-                              isEqualTo: snapshot.data!.docs[index]
-                                  ['stuffID']) //seçilen döküman
-                          .snapshots(),
-                      builder: (context, snap) {
-                        if (!snap.hasData)
-                          return const CircularProgressIndicator();
-                        return GridTile(
-                          child: Text(''),
-                          footer: Column(children: [
-                            Container(
-                              padding: EdgeInsets.fromLTRB(10, 10, 10, 25),
-                              alignment: Alignment.topCenter,
-                              child: Container(
-                                height: 150,
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[400],
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        snap.data!.docs[index]['stuffImage']),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                                  alignment: Alignment.bottomRight,
-                                  child: IconButton(
-                                    iconSize: 20,
-                                    icon: Icon(Icons.favorite),
-                                    onPressed: () {
-                                      favorite(
-                                          snap.data!.docs[index]['stuffID']);
-                                    },
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
-                                  alignment: Alignment.bottomLeft,
-                                  child: TextButton(
-                                    onPressed: () {},
-                                    onLongPress: () {},
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        primary: Colors.grey,
-                                        textStyle:
-                                            const TextStyle(fontSize: 18),
+  return MaterialApp(
+    home: Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('favorites')
+            .doc(userID)
+            .collection(userID)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const CircularProgressIndicator();
+          return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.docs.length,
+                    padding: const EdgeInsets.all(8),
+                    itemBuilder: (context, index) {
+                      return GridView(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: 9 / 10,
+                          crossAxisCount: 1,
+                        ),
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(8),
+                        children: <Widget>[
+                          StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('stuffs')
+                                  .where('stuffID',
+                                      isEqualTo: snapshot.data!.docs[index]
+                                          ['stuffID']) //seçilen döküman
+                                  .snapshots(),
+                              builder: (context, snap) {
+                                if (!snap.hasData)
+                                  return const CircularProgressIndicator();
+                                return GridTile(
+                                  child: Text(''),
+                                  footer: Column(children: [
+                                    Container(
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      alignment: Alignment.topCenter,
+                                      child: Container(
+                                        height: 100,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[400],
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                          image: DecorationImage(
+                                            image: NetworkImage(snap.data!
+                                                .docs[index]['stuffImage']),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                      onPressed: () {},
-                                      child:
-                                          Text(snap.data!.docs[index]['title']),
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Container(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Text(
-                                      snap.data!.docs[index]["price"] + ' TL'),
-                                )
-                              ],
-                            ),
-                          ]),
-                        );
-                      }),
-                ],
-              );
-            }),
-      ]);
-    },
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(10, 0, 20, 0),
+                                          alignment: Alignment.bottomRight,
+                                          child: IconButton(
+                                            iconSize: 20,
+                                            icon: Icon(Icons.favorite),
+                                            onPressed: () {
+                                              favorite(snap.data!.docs[index]
+                                                  ['stuffID']);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                          alignment: Alignment.bottomLeft,
+                                          child: TextButton(
+                                            onPressed: () {},
+                                            child: TextButton(
+                                              style: TextButton.styleFrom(
+                                                primary: Colors.grey,
+                                                textStyle: const TextStyle(
+                                                    fontSize: 18),
+                                              ),
+                                              onPressed: () {},
+                                              child: Text(snap.data!.docs[index]
+                                                  ['title']),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Text(snap.data!.docs[index]
+                                                  ["price"] +
+                                              ' TL'),
+                                        )
+                                      ],
+                                    ),
+                                  ]),
+                                );
+                              }),
+                        ],
+                      );
+                    }),
+              ]);
+        },
+      ),
+    ),
   );
 }
 
@@ -289,80 +300,88 @@ Widget MyStuffs(BuildContext context) {
       .where('userID', isEqualTo: _uid)
       .where('soldOrNot', isEqualTo: 'in sale');
   return MaterialApp(
-    home: StreamBuilder<QuerySnapshot>(
-        //veri akışı başlatılıyor
-        //akış oluşturuluyor
-        stream: _stuffStream.snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Text('Something is wrong.');
-          }
+    title: 'Flutter Demo',
+    theme: ThemeData(
+      primarySwatch: Colors.blue,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+    ),
+    home: Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+          //veri akışı başlatılıyor
+          //akış oluşturuluyor
+          stream: _stuffStream.snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Text('Something is wrong.');
+            }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
 
-          return GridView(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              childAspectRatio: 9 / 10,
-              crossAxisCount: 1,
-            ),
-            //veriyi gösterme kısmı
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              return GridTile(
-                child: Text(''),
-                footer: Column(children: [
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10, 10, 10, 25),
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      height: 150,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(20.0),
-                        image: DecorationImage(
-                          image: NetworkImage(data['stuffImage']),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
-                        alignment: Alignment.bottomLeft,
-                        child: TextButton(
-                          onPressed: () {},
-                          onLongPress: () {},
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              primary: Colors.grey,
-                              textStyle: const TextStyle(fontSize: 18),
-                            ),
-                            onPressed: () {},
-                            child: Text(data['title']),
+            return GridView(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                childAspectRatio: 9 / 10,
+                crossAxisCount: 1,
+              ),
+              //veriyi gösterme kısmı
+              children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                return GridTile(
+                  child: Text(''),
+                  footer: Column(children: [
+                    Container(
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 25),
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        height: 150,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.circular(20.0),
+                          image: DecorationImage(
+                            image: NetworkImage(data['stuffImage']),
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        alignment: Alignment.bottomCenter,
-                        child: Text(data["price"] + ' TL'),
-                      )
-                    ],
-                  ),
-                ]),
-              );
-            }).toList(),
-          );
-        }),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                          alignment: Alignment.bottomLeft,
+                          child: TextButton(
+                            onPressed: () {},
+                            onLongPress: () {},
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                primary: Colors.grey,
+                                textStyle: const TextStyle(fontSize: 18),
+                              ),
+                              onPressed: () {},
+                              child: Text(data['title']),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.bottomCenter,
+                          child: Text(data["price"] + ' TL'),
+                        )
+                      ],
+                    ),
+                  ]),
+                );
+              }).toList(),
+            );
+          }),
+    ),
   );
 }
 
@@ -394,79 +413,87 @@ Widget MySoldedStuffs(BuildContext context) {
       .where('userID', isEqualTo: _uid)
       .where('soldOrNot', isEqualTo: 'sold');
   return MaterialApp(
-    home: StreamBuilder<QuerySnapshot>(
-        //veri akışı başlatılıyor
-        //akış oluşturuluyor
-        stream: _stuffStream.snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Text('Something is wrong.');
-          }
+    title: 'Flutter Demo',
+    theme: ThemeData(
+      primarySwatch: Colors.blue,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+    ),
+    home: Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+          //veri akışı başlatılıyor
+          //akış oluşturuluyor
+          stream: _stuffStream.snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Text('Something is wrong.');
+            }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
 
-          return GridView(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              childAspectRatio: 9 / 10,
-              crossAxisCount: 1,
-            ),
-            //veriyi gösterme kısmı
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              return GridTile(
-                child: Text(''),
-                footer: Column(children: [
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10, 10, 10, 25),
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      height: 150,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(20.0),
-                        image: DecorationImage(
-                          image: NetworkImage(data['stuffImage']),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
-                        alignment: Alignment.bottomLeft,
-                        child: TextButton(
-                          onPressed: () {},
-                          onLongPress: () {},
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              primary: Colors.grey,
-                              textStyle: const TextStyle(fontSize: 18),
-                            ),
-                            onPressed: () {},
-                            child: Text(data['title']),
+            return GridView(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                childAspectRatio: 9 / 10,
+                crossAxisCount: 1,
+              ),
+              //veriyi gösterme kısmı
+              children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                return GridTile(
+                  child: Text(''),
+                  footer: Column(children: [
+                    Container(
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 25),
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        height: 150,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.circular(20.0),
+                          image: DecorationImage(
+                            image: NetworkImage(data['stuffImage']),
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        alignment: Alignment.bottomCenter,
-                        child: Text(data["price"] + ' TL'),
-                      )
-                    ],
-                  ),
-                ]),
-              );
-            }).toList(),
-          );
-        }),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                          alignment: Alignment.bottomLeft,
+                          child: TextButton(
+                            onPressed: () {},
+                            onLongPress: () {},
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                primary: Colors.grey,
+                                textStyle: const TextStyle(fontSize: 18),
+                              ),
+                              onPressed: () {},
+                              child: Text(data['title']),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.bottomCenter,
+                          child: Text(data["price"] + ' TL'),
+                        )
+                      ],
+                    ),
+                  ]),
+                );
+              }).toList(),
+            );
+          }),
+    ),
   );
 }

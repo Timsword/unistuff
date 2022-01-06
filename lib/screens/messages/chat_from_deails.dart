@@ -3,9 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
-  final docs; //ID of the user from the stuff
-
-  const ChatPage({Key? key, this.docs}) : super(key: key);
+  final String sellerUserID; //ID of the user from the stuff
+  final String title;
+  const ChatPage({Key? key, required this.sellerUserID, required this.title})
+      : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -29,7 +30,7 @@ class _ChatPageState extends State<ChatPage> {
     final User? user = auth.currentUser;
     final userID = user!.uid;
 
-    String anotherUserId = widget.docs['userID'];
+    String anotherUserId = widget.sellerUserID;
     //if(userID == anotherUserId){} ??
     if (userID.compareTo(anotherUserId) > 0) {
       groupChatId = '$userID - $anotherUserId';
@@ -43,7 +44,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.docs['title']),
+        title: Text(widget.title),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -119,7 +120,7 @@ class _ChatPageState extends State<ChatPage> {
       FirebaseFirestore.instance.runTransaction((transaction) async {
         await transaction.set(ref, {
           "senderId": userID,
-          "anotherUserId": widget.docs['userID'],
+          "anotherUserId": widget.sellerUserID,
           "timestamp": DateTime.now().millisecondsSinceEpoch.toString(),
           'content': msg,
           "type": 'text', //type of the message.
@@ -129,7 +130,7 @@ class _ChatPageState extends State<ChatPage> {
             .doc(groupChatId)
             .set({
           'senderID': userID,
-          'anotherUserID': widget.docs['userID'],
+          'anotherUserID': widget.sellerUserID,
           'lastMessage': msg,
           'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
         });

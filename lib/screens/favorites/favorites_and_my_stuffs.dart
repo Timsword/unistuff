@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:first_unistaff_project/product_detail.dart';
+import 'package:first_unistaff_project/screens/home/product_detail.dart';
 import 'package:first_unistaff_project/screens/favorites/update_stuff_form.dart';
-import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
+import 'package:first_unistaff_project/screens/messages/chat_from_deails.dart';
 import 'package:flutter/material.dart';
 
 class ShoppingBasket extends StatefulWidget {
@@ -139,131 +139,67 @@ Widget favorites(BuildContext context) {
     }
   }
 
-  return MaterialApp(
-    home: Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('favorites')
-            .doc(userID)
-            .collection(userID)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const CircularProgressIndicator();
-          return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.docs.length,
-                    padding: const EdgeInsets.all(8),
-                    itemBuilder: (context, index) {
-                      return GridView(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          childAspectRatio: 9 / 10,
-                          crossAxisCount: 1,
-                        ),
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(8),
-                        children: <Widget>[
-                          StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('stuffs')
-                                  .where('stuffID',
-                                      isEqualTo: snapshot.data!.docs[index]
-                                          ['stuffID']) //seçilen döküman
-                                  .snapshots(),
-                              builder: (context, snap) {
-                                if (!snap.hasData)
-                                  return const CircularProgressIndicator();
-                                return Card(
-                                  child: GridTile(
-                                    child: Text(''),
-                                    footer: Column(children: [
-                                      Container(
-                                        height: 100,
-                                        padding:
-                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                        alignment: Alignment.topCenter,
-                                        child: Container(
-                                          height: 100,
-                                          width: 150,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[400],
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                            image: DecorationImage(
-                                              image: NetworkImage(snap.data!
-                                                  .docs[index]['stuffImage']),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.fromLTRB(
-                                                10, 0, 20, 0),
-                                            alignment: Alignment.bottomRight,
-                                            child: IconButton(
-                                              iconSize: 20,
-                                              icon: Icon(Icons.favorite),
-                                              onPressed: () {
-                                                favorite(snap.data!.docs[index]
-                                                    ['stuffID']);
-                                              },
-                                            ),
-                                          ),
-                                          Container(
-                                            padding:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            alignment: Alignment.bottomLeft,
-                                            child: TextButton(
-                                              onPressed: () {},
-                                              child: TextButton(
-                                                style: TextButton.styleFrom(
-                                                  primary: Colors.grey,
-                                                  textStyle: const TextStyle(
-                                                      fontSize: 18),
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ProductDetail()));
-                                                },
-                                                child: Text(snap.data!
-                                                    .docs[index]['title']),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: [
-                                          Container(
-                                            alignment: Alignment.bottomCenter,
-                                            child: Text(snap.data!.docs[index]
-                                                    ["price"] +
-                                                ' TL'),
-                                          )
-                                        ],
-                                      ),
-                                    ]),
-                                  ),
-                                );
-                              }),
-                        ],
-                      );
-                    }),
-              ]);
-        },
-      ),
-    ),
+  return StreamBuilder<QuerySnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection('favorites')
+        .doc(userID)
+        .collection(userID)
+        .snapshots(),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData) return const Text("Loading...");
+      return Expanded(
+          child: ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                //return buildListItem(context, snapshot.data.documents[index]);
+
+                return Card(
+                  child: ExpansionTile(
+                    title: Text("hi"),
+                    children: <Widget>[
+                      StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('stuffs')
+                              .where('stuffID',
+                                  isEqualTo: snapshot.data!.docs[index]
+                                      ['stuffID']) //seçilen döküman
+                              .snapshots(),
+                          builder: (context, snap) {
+                            if (!snap.hasData) return const Text("Loading...d");
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    snap.data!.docs[index]['stuffImage']),
+                              ),
+                              title: Text(snap.data!.docs[index]['title']),
+                              subtitle: Column(
+                                children: <Widget>[
+                                  Text(snap.data!.docs[index]['details']),
+                                  /*TextButton(
+                                  child: const Text('Mesaj'),
+                                  onPressed: () {
+                                     Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ChatPage(
+                                                docs: snap.data!.docs[index])));
+                                  }),*/
+                                  TextButton.icon(
+                                      icon: Icon(Icons.favorite),
+                                      label: Text('Favori'),
+                                      onPressed: () async {
+                                        favorite(
+                                            snap.data!.docs[index]['stuffID']);
+                                      }),
+                                ],
+                              ),
+                            );
+                          }),
+                    ],
+                  ),
+                );
+              }));
+    },
   );
 }
 
@@ -368,16 +304,54 @@ Widget MyStuffs(BuildContext context) {
                             onLongPress: () {},
                             child: TextButton(
                               style: TextButton.styleFrom(
-                                primary: Colors.grey,
+                                primary: Colors.purple,
                                 textStyle: const TextStyle(fontSize: 18),
                               ),
                               onPressed: () {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ProductDetail()));
+                                        builder: (context) => ProductDetail(
+                                            stuffID:
+                                                data['stuffID'].toString())));
                               },
                               child: Text(data['title']),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(20, 0, 10, 10),
+                          alignment: Alignment.bottomLeft,
+                          child: RaisedButton(
+                            onPressed: () {},
+                            onLongPress: () {},
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                primary: Colors.grey,
+                                textStyle: const TextStyle(fontSize: 18),
+                              ),
+                              onPressed: () {
+                                deleteStuff(data['stuffID']);
+                              },
+                              child: Text('Delete'),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                          alignment: Alignment.bottomLeft,
+                          child: RaisedButton(
+                            onPressed: () {},
+                            onLongPress: () {},
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                primary: Colors.grey,
+                                textStyle: const TextStyle(fontSize: 18),
+                              ),
+                              onPressed: () {
+                                markAsSold(data['stuffID']);
+                              },
+                              child: Text('Mark as sold'),
                             ),
                           ),
                         ),
@@ -489,8 +463,33 @@ Widget MySoldedStuffs(BuildContext context) {
                                 primary: Colors.grey,
                                 textStyle: const TextStyle(fontSize: 18),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProductDetail(
+                                            stuffID:
+                                                data['stuffID'].toString())));
+                              },
                               child: Text(data['title']),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(20, 0, 10, 10),
+                          alignment: Alignment.bottomLeft,
+                          child: RaisedButton(
+                            onPressed: () {},
+                            onLongPress: () {},
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                primary: Colors.grey,
+                                textStyle: const TextStyle(fontSize: 18),
+                              ),
+                              onPressed: () {
+                                deleteStuff(data['stuffID']);
+                              },
+                              child: Text('Delete'),
                             ),
                           ),
                         ),

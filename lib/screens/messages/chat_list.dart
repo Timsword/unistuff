@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
+import 'package:first_unistaff_project/models/loading.dart';
+import 'package:first_unistaff_project/screens/messages/chat_from_deails.dart';
 import 'package:first_unistaff_project/screens/messages/chat_from_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class ChatList extends StatelessWidget {
                                     ['anotherUserID'])
                             .snapshots(),
                         builder: (context, snap) {
-                          if (!snap.hasData) return const Text("Loading...d");
+                          if (!snap.hasData) return circularProgress();
                           print(snap.data!.docs[index]['profileImage']);
                           print(snap.data!.docs[index]['name']);
                           print(snap.data!.docs[index]['username']);
@@ -64,26 +65,22 @@ class ChatList extends StatelessWidget {
                           print(snapshot.data!.docs[index]['timestamp']);
 
                           return ListTile(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ChatPageFromContatcs(
+                                              docs: snap.data!.docs[index])));
+                            },
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(
                                   snap.data!.docs[index]['profileImage']),
                             ),
-                            title: Text(snap.data!.docs[index]['name']),
+                            title: Text(snap.data!.docs[index]['username']),
                             subtitle: Column(
                               children: <Widget>[
-                                Text(snap.data!.docs[index]['username']),
                                 Text(snapshot.data!.docs[index]['lastMessage']),
-                                TextButton(
-                                    child: const Text('message'),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ChatPageFromContatcs(
-                                                      docs: snap
-                                                          .data!.docs[index])));
-                                    }),
                               ],
                             ),
                           );
@@ -204,15 +201,19 @@ class _MessageWidgetState extends State<MessageWidget> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(45),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(widget.image),
+                    ),
                   ),
-                  child: Column(
+                  /*child: Column(
                     children: <Widget>[
                       CircleAvatar(
                         radius: 45.0,
                         backgroundImage: NetworkImage(widget.image),
                       )
                     ],
-                  ),
+                  ),*/
                 ),
               ),
             ),

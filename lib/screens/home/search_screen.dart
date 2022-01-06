@@ -1,15 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:first_unistaff_project/product_detail.dart';
-import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
+import 'product_detail.dart';
+import 'package:first_unistaff_project/screens/messages/chat_from_deails.dart';
 import 'package:flutter/material.dart';
 import '../authenticate/log_in.dart';
 import '../../image.dart';
 
 class SearchMainPage extends StatefulWidget {
-  final searchString;
-  const SearchMainPage(String searchStringMain, {Key? key, this.searchString})
-      : super(key: key);
+  SearchMainPage({Key? key, this.searchString}) : super(key: key);
+  final String? searchString;
 
   @override
   State<StatefulWidget> createState() => _SearchMainPageState();
@@ -63,7 +62,7 @@ class _SearchMainPageState extends State<SearchMainPage> {
               Container(
                 height: 400,
                 child: Center(
-                  child: _SearchContentGridView(widget.searchString),
+                  child: _SearchContentGridView(widget.searchString.toString()),
                 ),
               ),
             ]),
@@ -274,7 +273,7 @@ Widget _SearchContentGridView(String searchString) {
                       )
                     ],
                   ),
-                  Column(
+                  /*Column(
                     children: [
                       TextButton(
                           child: const Text('Mesaj'),
@@ -290,7 +289,7 @@ Widget _SearchContentGridView(String searchString) {
                             }
                           }),
                     ],
-                  ),
+                  ),*/
                 ]),
               ),
             );

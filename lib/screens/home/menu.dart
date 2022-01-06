@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_unistaff_project/models/loading.dart';
 import 'product_detail.dart';
-import 'package:first_unistaff_project/screens/messages/chat_from_home.dart';
+import 'package:first_unistaff_project/screens/messages/chat_from_deails.dart';
 import 'package:flutter/material.dart';
 import '../authenticate/log_in.dart';
 import '../../image.dart';
@@ -61,8 +62,8 @@ class _MainPageState extends State<MainPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      SearchMainPage(searchStringMain)));
+                                  builder: (context) => SearchMainPage(
+                                      searchString: searchStringMain)));
                         },
                       ),
                     ),
@@ -188,6 +189,10 @@ Widget _ContentGridView() {
           .collection(userID)
           .doc(stuffID)
           .set({'stuffID': stuffID, 'dateTime': _dateTime});
+      FirebaseFirestore.instance
+          .collection('favorites')
+          .doc(userID)
+          .set({'stuffID': stuffID, 'dateTime': _dateTime});
       FirebaseFirestore.instance //add a favorite to stuff
           .collection('stuffs')
           .doc(stuffID)
@@ -210,7 +215,7 @@ Widget _ContentGridView() {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Yükleniyor");
+          return circularProgress();
         }
 
         return GridView(
@@ -269,7 +274,9 @@ Widget _ContentGridView() {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ProductDetail()));
+                                      builder: (context) => ProductDetail(
+                                          stuffID:
+                                              data['stuffID'].toString())));
                             },
                             child: Text(data['title']),
                           ),

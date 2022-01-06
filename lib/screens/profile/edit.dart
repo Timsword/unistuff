@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:first_unistaff_project/screens/home/menu.dart';
+import 'package:first_unistaff_project/screens/profile/profile.dart';
 import 'package:first_unistaff_project/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../settings.dart';
 
 class EditProfilePageState extends StatefulWidget {
@@ -55,6 +60,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
+  File? image;
+  String? downloadLink;
+  Future pickProfileImage() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final uid = user!.uid;
+    var fileToUpload =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (image == null) print("null don");
+    setState(() {
+      image = File(fileToUpload!.path);
+    });
+
+    Reference referenceWay = FirebaseStorage.instance
+        .ref()
+        .child('profilePics')
+        .child(uid)
+        .child("profilPic.png");
+
+    UploadTask uploadTask = referenceWay.putFile(image!);
+    TaskSnapshot downloadURL = (await uploadTask);
+    String url = await downloadURL.ref.getDownloadURL();
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({'profileImage': url});
+  }
+
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -78,13 +111,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 1,
-        leading: IconButton(
+        /*leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
             color: Colors.deepPurple,
           ),
-          onPressed: () {},
-        ),
+          onPressed: () {//geri dönme bozuk çalışmıyor
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => new ProfilePage()));
+          },
+        ),*/
         actions: [
           IconButton(
             icon: Icon(
@@ -142,9 +178,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           color: Colors.grey,
                         ),
-                        child: Icon(
-                          Icons.edit,
-                          color: Colors.white,
+                        child: InkWell(
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                          ),
+                          onTap: () {
+                            pickProfileImage();
+                          },
                         ),
                       ),
                     ),
